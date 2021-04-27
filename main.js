@@ -1,4 +1,4 @@
-//Called after application is started.
+/** Called after application is started. */
 const OnStart = () => {
     $('#out_data').hide()
 }
