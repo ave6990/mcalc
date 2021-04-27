@@ -1,0 +1,117 @@
+html {
+	background: #ddd;
+}
+
+body {
+	margin: 0px;
+	color: #222;
+	background: #fcfcfc;
+	font: 18pt sans-serif;
+}
+
+header {
+	padding: 5px;
+/*	color: #034769;*/
+	color: #fafafa;
+	background: #034769;
+	font-size: 28pt;
+	text-align: center;
+/*	background: #3ca0d0;*/
+}
+
+section header {
+	padding: 0px;
+	font-size: 18pt;
+}
+
+main {
+	padding: 20px;
+}
+
+nav, footer {
+	padding: 6px;
+	background: #034769;
+	color: #fafafa;
+	border: 2px solid #086fa1;
+}
+
+nav ul {
+	margin: 0px;
+	padding: 0px;
+}
+
+nav li {
+	display: inline;
+	padding: 0 10px;
+	border-right: 2px solid #086fa1;
+}
+
+nav a:link, nav a:visited {
+	color: #fafafa;
+	text-decoration: none;
+}
+
+nav li:hover {
+	background: #086fa1;
+}
+
+footer {
+	text-align: center;
+}
+
+h1 {
+	font-size: 24pt;
+	margin: 0;
+	padding-bottom: 10px;
+}
+
+#tb_page {
+	width: 30px;
+	min-width: 30px;
+}
+
+input, select, button {
+	margin: 5px;
+	font-size: 18pt;
+	min-width: 150px;
+	border-color: #086fa1;
+	border-style: solid;
+	border-width: 1px;
+	border-radius: 5px;
+}
+
+.label {
+	display: inline-block;
+	width: 400px;
+}
+
+input .field {
+	display: block;
+}
+
+label {
+	display: block;
+}
+
+.button {
+	font-size: 16pt;
+/*	background: #fff;*/
+	min-width: 30px;
+}
+
+table {
+	display: block;
+	border-collapse: collapse;
+	background: #ffffff;
+	margin-top: 10px;
+	overflow: scroll;
+}
+
+td {
+	font-size: 12pt;
+	border-width: 1px;
+	border-style: solid;
+	border-color: #222222;
+	padding: 1px;
+	margin: 0px;
+}

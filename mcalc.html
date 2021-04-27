@@ -1,0 +1,63 @@
+<mhtml>
+<head>
+    <meta name="viewport" content="width=device-width" charset="utf-8">
+    <script src='file:///android_asset/app.js'></script>
+    <script src="lib/jquery.js"></script>
+    <link rel="stylesheet" type="text/css" href="styles/style.css"/>
+</head>
+<body onload="app.Start()">
+    <header>
+        <p>Метрологический калькулятор</p>
+    </header>
+    <main>
+        <section id=in_data>
+            <section id=mi_info>
+                <button id=test>Тестовые данные</button>
+                <header>
+                    <p>Данные СИ</p>
+                </header>
+                <label>Тип СИ</label>
+                <input type=text id=mi_type>
+                <label>Заводской номер</label>
+                <input type=text id=mi_number>
+                <label>Год выпуска</label>
+                <input type=text id=mi_manufacture_year>
+                <label>Диапазон измерения</label>
+                <input type=text id=min_range class=inline>
+                <input type=text id=max_range>
+            </section>
+            <section id=mesurements>
+                <header>
+                    <p>Измерение</p>
+                </header>
+                <label>Опорное значение</label>
+                <input type=text id=ref_value>
+                <label>Количество измерений</label>
+                <input type=text id=m_count value=1>
+            </section>
+            <label>Результаты измерений</label>
+            <section id=m_values>
+                <input type=text id=input_0>
+            </section>
+            <button id=btn_calculate>Вычислить</button>
+        </section>
+        <section id=out_data>
+            <button id=btn_edit>Изменить данные</button>
+            <header>
+                <p>Результаты</p>
+            </header>
+            <section id=report>
+
+            </section>
+        </section>
+    </main>
+    <footer>
+        <p>Оренбургский ЦСМ 2021</p>
+    </footer>
+</body>
+
+<script src="main.js"></script>
+<script src="lib/metrology.js"></script>
+<script src="lib/ui.js"></script>
+
+</html>
