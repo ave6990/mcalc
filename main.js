@@ -4,6 +4,8 @@ const OnStart = () => {
 }
 
 $('#btn_calculate').click( () => {
+    const data = {}
+
     $('#in_data').hide()
     $('#report').empty()
     $('#out_data').show()
@@ -23,6 +25,30 @@ $('#btn_calculate').click( () => {
     $('#report').append(`<p>Относительная погрешность: ${rel_error} %</p>`)
 //    $('#report').append(`<p>Приведенная погрешность: ${rel_error}</p>`)
     $('#report').append(`<p>СКО: ${sko_val}</p>`)
+
+    const fields = {
+        mi_type: 'Тип СИ',
+        mi_number: 'Зав. номер',
+        mi_manufactue_year: 'Год выпуска',
+        average_val: 'Среднее значение',
+        'abs_error': 'Абсолютная погрешность',
+        'rel_error': 'Относительная погрешность',
+        // 'ref_error': 'Приведенная погрешность',
+        'sko': 'СКО',
+    }
+
+    const data = [{
+        mi_type: $('#mi_type').val(),
+        mi_number: $('#mi_number').val(),
+        mi_manufacture_year: $('#mi_manufacture_year').val(),
+        average_val: na,
+        'abs_error': abs_error,
+        'rel_error': rel_error,
+        // 'ref_error': ref_error,
+        'sko': sko_val,
+    }]
+
+    $('#report').append(ui.jsonToTable(data, fields, 'result_table', true, true))
 })
 
 $('#btn_edit').click( () => {

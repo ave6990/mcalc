@@ -107,8 +107,9 @@ table {
 	overflow: scroll;
 }
 
-td {
+td, th {
 	font-size: 12pt;
+    text-align: left;
 	border-width: 1px;
 	border-style: solid;
 	border-color: #222222;
