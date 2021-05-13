@@ -1,92 +1,107 @@
 /** Called after application is started. */
-const OnStart = () => {
-    $('#out_data').hide()
-}
+const measurements = {}
 
-$('#btn_calculate').click( () => {
-    const data = {}
-
-    $('#in_data').hide()
-    $('#report').empty()
-    $('#out_data').show()
-    $('#report').append(`<p>Тип СИ: ${$('#mi_type').val()}</p>`)
-    $('#report').append(`<p>Зав. номер: ${$('#mi_number').val()}</p>`)
-    $('#report').append(`<p>Год выпуска: ${$('#mi_manufacture_year').val()}</p>`)
-
-    const values = readData()
-    const na = metrology.average(values)
-    const ref_val = Number($('#ref_value').val())
-    const abs_error = na - ref_val
-    const rel_error = metrology.relativeError(na, ref_val)
-    const sko_val = metrology.sko(values)
-
-    $('#report').append(`<p>Среднее значение: ${na}</p>`)
-    $('#report').append(`<p>Абсолютная погрешность: ${abs_error}</p>`)
-    $('#report').append(`<p>Относительная погрешность: ${rel_error} %</p>`)
-//    $('#report').append(`<p>Приведенная погрешность: ${rel_error}</p>`)
-    $('#report').append(`<p>СКО: ${sko_val}</p>`)
-
-    const fields = {
-        mi_type: 'Тип СИ',
-        mi_number: 'Зав. номер',
-        mi_manufactue_year: 'Год выпуска',
-        average_val: 'Среднее значение',
-        'abs_error': 'Абсолютная погрешность',
-        'rel_error': 'Относительная погрешность',
-        // 'ref_error': 'Приведенная погрешность',
-        'sko': 'СКО',
+const getVal = (id, func) => {
+    const res = document.getElementById(id).value   
+    if (func) {
+        return func(res)
     }
 
-    const data = [{
-        mi_type: $('#mi_type').val(),
-        mi_number: $('#mi_number').val(),
-        mi_manufacture_year: $('#mi_manufacture_year').val(),
-        average_val: na,
-        'abs_error': abs_error,
-        'rel_error': rel_error,
-        // 'ref_error': ref_error,
-        'sko': sko_val,
-    }]
+    return res
+}
 
-    $('#report').append(ui.jsonToTable(data, fields, 'result_table', true, true))
-})
+const measure = () => {
+    const m_value = getVal('measured_value', Number)
+    const ref_value = getVal('ref_value', Number)
 
-$('#btn_edit').click( () => {
-    $('#out_data').hide()
-    $('#in_data').show()
-})
+    if (m_value) {
+        const range = getVal('range', (value) => {
+            return value.split('-').map( (val) => {
+                return Number(val)
+            } )
+        } )
+        //app.ShowPopup(range)
+        return {channel: getVal('channel'),
+            'ref_value': ref_value,
+            measured_value: m_value,
+            'range': range.join('-'),
+            range_min: range[0],
+            range_max: range[1],
+            abs: metrology.absoluteError(m_value, ref_value),
+            rel: metrology.relativeError(m_value, ref_value),
+            ref: metrology.reducedError(m_value, ref_value, range[0], range[1]),
+        }
+    } else {
+        return undefined
+    }
+}
 
-$('#m_count').change( () => {
-    addField($('#m_count').val())
+const OnStart = () => {
+    //document.getElementById('measurements').style.display = 'none'
+    document.getElementById('date').value = mDate.toString(new Date())
+    app.SetOrientation('Portrait')
+}
+
+/**
+ * @description Select a contant of text fields.
+ */
+for (const element of document.getElementsByTagName('input')) {
+    element.addEventListener('click', (event) => {
+        event.target.select()
+    })
+}
+
+const calculate_stat = (m_data) => {
+
+}
+
+document.getElementById('btn_add_mi').addEventListener('click', (event) => {
+    app.ShowPopup('Данные СИ сохранены')
+} )
+
+$('#btn_add_measure').click( () => {
+    const in_data = measure()
+    const channel = document.getElementById('channel').value
+    const fields = {
+        ref_value: 'Xref',
+        measured_value: 'Xi',
+        range: 'R',
+        abs: 'Δ',
+        rel: 'δ, %',
+        ref: 'γ, %',
+    }
+
+    if (!measurements[channel]) {
+        measurements[channel] = { 'measurements': [], }
+    }
+
+    if (in_data) {
+        document.getElementById('measurements_results').innerHTML = ''
+        measurements[channel]['measurements'].push(in_data)
+        for (const measurement of Object.keys(measurements)) {
+            document.getElementById('measurements_results').innerHTML += `<p>Канал - ${measurement}</p>`
+            document.getElementById('measurements_results').innerHTML += ui.jsonToTable(
+                measurements[measurement]['measurements'],
+                fields,
+                `table_${measurement}`,
+                true
+            )
+        }
+    }
 })
 
 $('#test').click( () => {
-    let l = [100.5, 101, 100.5, 101.5, 100, 100.5, 100.5, 101, 101.5, 100.5]
-    $('#mi_type').val('АМ-5, рег. № 10719-07')
-    $('#mi_number').val('241821')
-    $('#mi_manufacture_year').val(2017)
-    $('#min_range').val(0)
-    $('#max_range').val(100)
-    $('#ref_value').val(100)
-    $('#m_values').empty()
-    $('#m_count').val(10)
-
-    for (let i = 0; i < 10; i++) {
-        $('#m_values').append(`<input type="text" id="input_${i}" value="${l[i]}"/>`)
+    const test_data = {
+        mi_type: 'АМ-5',
+        mi_registry_number: '10719-07',
+        mi_number: 241821,
+        mi_manufacture_year: 2017,
+        range: '0-100',
+        measured_value: 101.5,
+        ref_value: 100,
+    }
+    
+    for (const key of Object.keys(test_data)) {
+        document.getElementById(key).value = test_data[key]
     }
 })
-
-const addField = (count) => {
-    $('#m_values').empty()
-    for (let i = 0; i < count; i++) {
-        $('#m_values').append('<div>').append(`<input type="text" id="input_${i}"/>`)
-    }
-}
-
-const readData = () => {
-    let data = []
-    for (let i = 0; i < $('#m_count').val(); i++) {
-        data[i] = $(`#input_${i}`).val()
-    }
-    return data
-}
