@@ -126,15 +126,24 @@ class Device {
     }
 
     getChannelsList() {
-        let temp = this.measurements.map( (item) => {
+        const channels = []
+
+        const temp = this.measurements.map( (item) => {
             return item.channel
         } )
-        return temp.filter( (v, i, s) => {
-            return s.indexOf(v) === s.lastIndexOf(v)
-        } )
+        
+        for (const val of temp) {
+            if (channels.indexOf(val) < 0) {
+                channels.push(val)
+            }
+        }
+
+        return channels
     }
 
-    getMeasurements() {
-
+    getMeasurements(channel) {
+        return this.measurements.filter( (item) => {
+            item.channel == channel
+        } )
     }
 }
