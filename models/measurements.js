@@ -44,11 +44,16 @@ class Device {
         this.setData(data)
     }
 
+    /** @debug: Add validation. */
     setData(data) {
         Object.assign(this, data)
+        /**for (const key of Object.keys(this)) {
+            if ([null, undefined, ''].indexOf(data[key])) {
+                this[key] = null
+            }
+        }*/
     }
 
-    /** @debug: Add validation. */
     setDate(date) {
         this.date = date
     }

@@ -2,6 +2,7 @@
 let measurements = {}
 let device = {}
 
+/** Read the value from a text input fields. */
 const getVal = (id, func) => {
     const res = document.getElementById(id).value   
     if (func) {
@@ -11,25 +12,46 @@ const getVal = (id, func) => {
     return res
 }
 
-const OnStart = () => {
-    document.getElementById('measurements').style.display = 'none'
-    app.SetOrientation('Portrait')
-    measurements = new Measurements()
-}
-
-/**
- * @description Select a contant of text fields.
- */
+/** Select a contant of text fields. */
 for (const element of document.getElementsByTagName('input')) {
     element.addEventListener('click', (event) => {
         event.target.select()
     })
 }
 
+
+const mi_info_fields = ['date', 'count_number', 'mi_type', 
+    'mi_registry_number', 'mi_manufacture_year', 'mi_number']
+
+/** Event of change the input fields. */
+for (const id of mi_info_fields) {
+    document.getElementById(id).addEventListener('click', (event) => {
+        device.setData( () => {
+            const mi_info = {}
+
+            for (const field of mi_info_fields) {
+                if (field == 'date') {
+                    mi_info[field] = mDate.toDate(document.getElementById(field).value, true)
+                } else {
+                    mi_info[field] = document.getElementById(field).value
+                }
+            }
+            return mi_info
+        } )
+    } )
+}
+
+
+const OnStart = () => {
+    document.getElementById('measurements').style.display = 'none'
+    app.SetOrientation('Portrait')
+    measurements = new Measurements()
+}
+
 document.getElementById('btn_add_mi').addEventListener('click', (event) => {
     document.getElementById('measurements').style.display = ''
     document.getElementById('main').style.display = 'none'
-    document.getElementById('date').value = mDate.toString(new Date())
+    document.getElementById('date').value = mDate.toDOMString(new Date())
     device = new Device({date: new Date()})
 } )
 
@@ -55,24 +77,6 @@ const measure = () => {
     return undefined
 }
 
-const mi_info_fields = ['date', 'count_number', 'mi_type', 
-    'mi_registry_number', 'mi_manufacture_year', 'mi_number']
-
-for (const id of mi_info_fields) {
-    document.getElementById(id).addEventListener('click', (event) => {
-        device.setData(read_mi_info)
-    } )
-}
-
-const read_mi_info = () => {
-    const mi_info = {}
-
-    for (const field of mi_info_fields) {
-        mi_info[field] = document.getElementById(field).value
-    }
-    return mi_info
-}
-
 $('#btn_add_measure').click( () => {
     const in_data = measure()
     const channel = document.getElementById('channel').value
@@ -85,23 +89,12 @@ $('#btn_add_measure').click( () => {
         red_error: 'γ, %',
     }
 
-    device.addMeasurement(in_data)
-
     if (in_data) {
+        device.addMeasurement(in_data)
         document.getElementById('measurements_results').innerHTML = ''
         
         document.getElementById('measurements_results').innerHTML +=
             ui.jsonToTable(device.measurements, fields, `table_mes`, true)
-        /**measurements[channel]['measurements'].push(in_data)
-        for (const measurement of Object.keys(measurements)) {
-            document.getElementById('measurements_results').innerHTML += `<p>Канал - ${measurement}</p>`
-            document.getElementById('measurements_results').innerHTML += ui.jsonToTable(
-                measurements[measurement]['measurements'],
-                fields,
-                `table_${measurement}`,
-                true
-            )
-        }*/
     }
 })
 
