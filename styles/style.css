@@ -124,3 +124,8 @@ th {
 #lbl_error_type {
     display: inline-block;
 }
+
+hr {
+    background: #086fa1;
+    border-color: #086fa1;
+}

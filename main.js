@@ -5,11 +5,14 @@ let device = {}
 /** Read the value from a text input fields. */
 const getVal = (id, func) => {
     const res = document.getElementById(id).value   
-    if (func) {
-        return func(res)
+    if (res) {
+        if (func) {
+            return func(res)
+        }
+        return res
+    } else {
+        return undefined
     }
-
-    return res
 }
 
 /** Select a contant of text fields. */
@@ -79,25 +82,63 @@ const measure = () => {
 
 $('#btn_add_measure').click( () => {
     const in_data = measure()
-    const channel = document.getElementById('channel').value
+
+    if (in_data) {
+        device.addMeasurement(in_data)
+        showMeasurements(device)
+    }
+
+})
+
+const showMeasurements = (device) => {
     const fields = {
-        ref_value: 'Xref',
-        m_value: 'Xi',
+        id: '#',
+        ref_value: 'X_ref',
+        m_value: 'X_i',
         range: 'R',
         abs_error: 'Δ',
         rel_error: 'δ, %',
         red_error: 'γ, %',
     }
 
-    if (in_data) {
-        device.addMeasurement(in_data)
-        document.getElementById('measurements_results').innerHTML = ''
-        
-        document.getElementById('measurements_results').innerHTML +=
-            ui.jsonToTable(device.measurements, fields, `table_mes`, true)
+    const fields_stat = {
+        ref_value: 'X_ref',
+        average_value: 'X_i_cp',
+        range: 'R',
+        abs_error: 'Δ_cp',
+        rel_error: 'δ_cp, %',
+        red_error: 'γ_cp, %',
+        sko: 'СКО',
     }
-})
+    let m_results = document.getElementById('measurements_results')
 
+    m_results.innerHTML = ''
+
+    device.getUnique('channel').map( (channel) => {
+        m_results.innerHTML +=
+            ui.jsonToTable(device.getMeasurements(channel), {
+                id: channel,
+                caption: `Канал - ${channel}`,
+                header: true,
+                fields: fields,
+            } )
+
+        //document.getElementById('measurements_results').innerHTML +=
+        m_results.innerHTML +=
+            ui.jsonToTable(device.getStatistic(channel), {
+                id: `stat_${channel}`,
+                caption: `Статистические показатели`,
+                header: true,
+                fields: fields_stat,
+            } )
+        
+        m_results.innerHTML += '<hr></hr>'
+    } )
+
+
+    document.getElementById('measurement_number').innerHTML = device.m_id
+}
+ 
 $('#test').click( () => {
     const test_data = {
         mi_type: 'АМ-5',

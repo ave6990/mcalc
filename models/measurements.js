@@ -39,6 +39,9 @@ class Measurements {
 
 class Device {
     measurements = []
+    statistic = []
+    m_id = 1
+    s_id = 1
 
     constructor(data) {
         this.setData(data)
@@ -87,17 +90,34 @@ class Device {
     }
 
     addMeasurement(measurement) {
-        Object.assign(measurement, this.calculate(measurement))
+        Object.assign(measurement, this.calculate(measurement), {id: this.m_id})
+        this.m_id++
         this.measurements.push(measurement) 
+
+        if (this.measurements.length > 2) {
+            this.calculateStatistics()
+        }
     }
 
-    setMeasurement(id) {
+    setMeasurement(measurement, id) {
         Object.assign(measurement, this.calculate(measurement))
+        id = this.getMeasurementIndex(id)
         this.measurements.splice(id, 1, measurement)
+
+        if (this.measurements.length > 2) {
+            this.calculateStatistics()
+        }
     }
 
     removeMeasurement(id) {
+        id = this.getMeasurementIndex(id)
         this.measurements.splice(id, 1)
+    }
+
+    getMeasurementIndex(id) {
+        return this.measurements.findIndex( (item) => {
+            return item.id == id
+        } )
     }
 
     calculate(measurement) {
@@ -125,25 +145,88 @@ class Device {
         }
     }
 
-    getChannelsList() {
-        const channels = []
+    calculateStatistics() {
+        for (const channel of this.getUnique('channel')) {
+            const measurements = this.getMeasurements(channel)
+            for (const ref_val of this.getUnique('ref_value', measurements)) {
+                const res = {}
+                const cur_measurements = this.getMeasurements(channel, ref_val)
+                if (cur_measurements.length > 2) {
+                    res.channel = channel
+                    res.ref_value = ref_val
+                    const vals = []
+                    for (const val of cur_measurements) {
+                        vals.push(val.m_value)
+                    }
+                    res.average_value = metrology.average(vals)
+                    res.abs_error = metrology.absoluteError(res.average_value, res.ref_value)
+                    res.rel_error = metrology.relativeError(res.average_value, res.ref_value)
 
-        const temp = this.measurements.map( (item) => {
-            return item.channel
-        } )
-        
-        for (const val of temp) {
-            if (channels.indexOf(val) < 0) {
-                channels.push(val)
+                    if (cur_measurements[0].range) {
+                        res.red_error = metrology.reducedError(res.average_value, res.ref_value,
+                            cur_measurements[0].min_range, cur_measurements[0].max_range)
+                    }
+
+                    res.sko = metrology.sko(cur_measurements.map( (item) => {
+                        return item.m_value
+                    } ))
+
+                    const index = this.statistic.filter( (item) => {
+                        return item.channel == channel
+                    } ).findIndex( (item) => {
+                        return item.ref_value == ref_val
+                    } )
+
+                    if (index < 0) {
+                        res.id = this.s_id
+                        this.s_id++
+                        this.statistic.push(res)
+                    } else {
+                        /** @debug Much more similar code */
+                        const stat_id = this.statistic.filter( (item) => {
+                            return item.channel == channel
+                        } ).filter( (item) => {
+                            return item.ref_value == ref_val
+                        } )
+                        this.statistic[stat_id] = res
+                    }
+                }
             }
         }
-
-        return channels
     }
 
-    getMeasurements(channel) {
-        return this.measurements.filter( (item) => {
-            item.channel == channel
+    getUnique(field, data) {
+        const res = []
+        if (!data) {
+            data = this.measurements
+        }
+
+        data.map( (item) => {
+            if (res.indexOf(item[field]) < 0) {
+                res.push(item[field])
+            }
+        } )
+
+        return res
+    }
+
+    getMeasurements(channel, ref_val = null) {
+        const res = this.measurements.filter( (item) => {
+            return item.channel == channel
+        } )
+
+        if (ref_val == null) {
+            return res
+        } else {
+            return res.filter( (item) => {
+                return item.ref_value == ref_val
+            } )
+        }
+    }
+
+    getStatistic(channel) {
+        return  this.statistic.filter( (item) => {
+            return item.channel == channel
         } )
     }
 }
