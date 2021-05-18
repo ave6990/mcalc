@@ -28,6 +28,7 @@ main {
     padding: 20px;
 }
 
+/* Navigation styles */
 nav, footer {
     padding: 6px;
     background: #034769;
@@ -54,6 +55,7 @@ nav a:link, nav a:visited {
 nav li:hover {
     background: #086fa1;
 }
+/* End Navigation styles */
 
 footer {
     text-align: center;
@@ -93,6 +95,7 @@ label {
     min-width: 30px;
 }
 
+/* Table styles */
 table {
     display: block;
     font-size: 16pt;
@@ -116,16 +119,23 @@ th {
 
 }
 
+.selected_row {
+    background: #afdefa;
+}
+/* End Table styles */
+
 .info {
     font-size: 12pt;
     background: #f3f3f3;
 }
 
-#lbl_error_type {
-    display: inline-block;
-}
-
 hr {
     background: #086fa1;
     border-color: #086fa1;
+}
+
+.grid_3c {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-column-gap: 5px;
 }

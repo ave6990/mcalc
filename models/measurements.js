@@ -107,7 +107,7 @@ class Device {
     }
 
     setMeasurement(measurement, id) {
-        Object.assign(measurement, this.calculate(measurement))
+        Object.assign(measurement, this.calculate(measurement), {id: id})
         id = this.getMeasurementIndex(id)
         this.measurements.splice(id, 1, measurement)
 
@@ -119,6 +119,10 @@ class Device {
     removeMeasurement(id) {
         id = this.getMeasurementIndex(id)
         this.measurements.splice(id, 1)
+    }
+
+    getMeasurement(id) {
+        return this.measurements[this.getMeasurementIndex(id)]
     }
 
     getMeasurementIndex(id) {
@@ -228,5 +232,9 @@ class Device {
         return  this.statistic.filter( (item) => {
             return item.channel == channel
         } )
+    }
+
+    getJSON() {
+        return Object.assign({}, this)
     }
 }

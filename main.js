@@ -80,15 +80,68 @@ const measure = () => {
     return undefined
 }
 
-$('#btn_add_measure').click( () => {
+document.getElementById('btn_add_measure').addEventListener('click', (event) => {
     const in_data = measure()
 
     if (in_data) {
         device.addMeasurement(in_data)
         showMeasurements(device)
     }
-
+    
+    tableEventListener()
 })
+
+const tableEventListener = () => {
+    for (const table of document.getElementsByTagName('table')) {
+        table.addEventListener('click', (event) => {
+            const cell = event.target.id
+            const tr = event.target.parentElement
+            tr.classList.add('selected_row')
+            const [ type, channel, row, col ] = cell.split('_')
+            if (type == 'ch') {
+                const m_id = Number(document.getElementById(`ch_${channel}_${row}_0`).innerHTML)
+                read_measurement(m_id)
+            }
+        })
+    }
+}
+
+document.getElementById('btn_edit_measure').addEventListener('click', (event) => {
+    const in_data = measure()
+    const id = Number(document.getElementById('measurement_number').innerHTML)
+
+    if (in_data) {
+        device.setMeasurement(in_data, id)
+        showMeasurements(device)
+    }
+    
+    tableEventListener()
+} )
+
+document.getElementById('btn_del_measure').addEventListener('click', (event) => {
+    if (device.measurements.length > 0) {
+        const id = Number(document.getElementById('measurement_number').innerHTML)
+
+        device.removeMeasurement(id)
+        showMeasurements(device)
+        tableEventListener()
+    }
+} )
+
+const read_measurement = (id) => {
+    const vals = device.getMeasurement(id) 
+    fields = {
+        channel: vals.channel,
+        measured_value: vals.m_value,
+        ref_value: vals.ref_value,
+        range: vals.range,
+    }
+
+    document.getElementById('measurement_number').innerHTML = id
+    for (const field of Object.keys(fields)) {
+        document.getElementById(field).value = fields[field]
+    }
+}
 
 const showMeasurements = (device) => {
     const fields = {
@@ -117,14 +170,14 @@ const showMeasurements = (device) => {
     device.getUnique('channel').map( (channel) => {
         m_results.innerHTML +=
             ui.jsonToTable(device.getMeasurements(channel), {
-                id: channel,
+                id: `ch_${channel}`,
                 caption: `Канал - ${channel}`,
                 header: true,
                 fields: fields,
             } )
 
         const stat = device.getStatistic(channel)
-        if (stat) {
+        if (stat.length > 0) {
             m_results.innerHTML +=
                 ui.jsonToTable(stat, {
                     id: `stat_${channel}`,
@@ -132,16 +185,15 @@ const showMeasurements = (device) => {
                     header: true,
                     fields: fields_stat,
                 } )
-            
-            m_results.innerHTML += '<hr></hr>'
         }
+        m_results.innerHTML += '<hr></hr>'
     } )
 
 
     document.getElementById('measurement_number').innerHTML = device.m_id
 }
  
-$('#test').click( () => {
+document.getElementById('test').addEventListener('click', (event) => {
     const test_data = {
         mi_type: 'АМ-5',
         mi_registry_number: '10719-07',

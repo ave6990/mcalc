@@ -3,7 +3,6 @@
     <title>Mcalc</title>
     <meta name="viewport" content="width=device-width" charset="utf-8">
     <script src='file:///android_asset/app.js'></script>
-    <script src="lib/jquery.js"></script>
     <link rel="stylesheet" type="text/css" href="styles/style.css"/>
 </head>
 <body onload="app.Start()">
@@ -53,13 +52,6 @@
                 <input type=text id=measured_value>
                 <label>Опорное значение (Xref)</label>
                 <input type=text id=ref_value>
-                <!--<label id=lbl_error_type>Допускаемая погрешность (En)</label>
-                <select id=error_type>
-                    <option selected value=Δ>Абсолютная</option>
-                    <option value=δ>Относительная</option>
-                    <option value=γ>Приведенная</option>
-                </select>
-                <input type=text id=error_value>-->
                 <details>
                     <summary>Диапазон измерения (R)</summary>
                     <p class=info>Нижняя и верхняя границы диапазона
@@ -67,7 +59,11 @@
                     '0-100', '20-100' и т. д.</p>
                 </details>
                 <input type=text id=range class=inline>
-                <button id=btn_add_measure>Добавить</button>
+                <div class=grid_3c>
+                    <button id=btn_add_measure>Добавить</button>
+                    <button id=btn_edit_measure>Изменить</button>
+                    <button id=btn_del_measure>Удалить</button>
+                </div>
             </section>
             <section>
                 <header>
