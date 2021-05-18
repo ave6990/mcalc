@@ -22,6 +22,17 @@ for (const element of document.getElementsByTagName('input')) {
     })
 }
 
+const toDevicePage = () => {
+    document.getElementById('measurements').style.display = ''
+    document.getElementById('measurements_results').innerHTML = ''
+    document.getElementById('main').style.display = 'none'
+}
+
+const toMainPage = () => {
+    document.getElementById('measurements').style.display = 'none'
+    document.getElementById('main').style.display = ''
+}
+
 const OnStart = () => {
     document.getElementById('measurements').style.display = 'none'
     app.SetOrientation('Portrait')
@@ -31,12 +42,10 @@ const OnStart = () => {
 }
 
 document.getElementById('btn_add_mi').addEventListener('click', (event) => {
-    document.getElementById('measurements').style.display = ''
-    document.getElementById('measurements_results').innerHTML = ''
-    document.getElementById('main').style.display = 'none'
+    toDevicePage()
     if (device.id) {
         device.id = measurements.genDeviceID()
-        read_device()
+        readDevice()
     } else {
         device = new Device({id: measurements.genDeviceID()})
         document.getElementById('date').value = mDate.toDOMString(new Date())
@@ -46,19 +55,16 @@ document.getElementById('btn_add_mi').addEventListener('click', (event) => {
 } )
 
 document.getElementById('btn_edit_mi').addEventListener('click', (event) => {
-    document.getElementById('measurements').style.display = ''
-    document.getElementById('measurements_results').innerHTML = ''
-    document.getElementById('main').style.display = 'none'
+    toDevicePage()
     if (device.id) {
-        read_device()
+        readDevice()
         showMeasurements(device)
         tableEventListener()
     }
 } )
 
 document.getElementById('btn_save_mi').addEventListener('click', (event) => {
-    document.getElementById('measurements').style.display = 'none'
-    document.getElementById('main').style.display = ''
+    toMainPage()
     Object.assign(device, {
         date: document.getElementById('date').value,
         count_number: getVal('count_number'),
@@ -81,8 +87,7 @@ document.getElementById('btn_save_mi').addEventListener('click', (event) => {
 } )
 
 document.getElementById('btn_cancel_mi').addEventListener('click', (event) => {
-    document.getElementById('measurements').style.display = 'none'
-    document.getElementById('main').style.display = ''
+    toMainPage()
 } )
 
 document.getElementById('btn_del_mi').addEventListener('click', (event) => {
@@ -152,7 +157,7 @@ const tableEventListener = () => {
             const [ type, channel, row, col ] = cell.split('_')
             if (type == 'ch') {
                 const m_id = Number(document.getElementById(`ch_${channel}_${row}_0`).innerHTML)
-                read_measurement(m_id)
+                readMeasurement(m_id)
             }
             if (type == 'devices') {
                 const dev_id = Number(document.getElementById(`devices_${channel}_0`).innerHTML)
@@ -185,7 +190,7 @@ document.getElementById('btn_del_measure').addEventListener('click', (event) => 
 } )
 
 /** Insert data from device model to a form fields in devices info section */
-const read_device = () => {
+const readDevice = () => {
     fields = ['date', 'count_number', 'mi_type', 'mi_manufacture_year',
         'mi_registry_number', 'mi_number', 'mi_owner']
     
@@ -196,7 +201,7 @@ const read_device = () => {
 }
 
 /** Insert measurement data to a form fields in measuement section. */
-const read_measurement = (id) => {
+const readMeasurement = (id) => {
     const vals = device.getMeasurement(id) 
     fields = {
         channel: vals.channel,
