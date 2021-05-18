@@ -123,16 +123,18 @@ const showMeasurements = (device) => {
                 fields: fields,
             } )
 
-        //document.getElementById('measurements_results').innerHTML +=
-        m_results.innerHTML +=
-            ui.jsonToTable(device.getStatistic(channel), {
-                id: `stat_${channel}`,
-                caption: `Статистические показатели`,
-                header: true,
-                fields: fields_stat,
-            } )
-        
-        m_results.innerHTML += '<hr></hr>'
+        const stat = device.getStatistic(channel)
+        if (stat) {
+            m_results.innerHTML +=
+                ui.jsonToTable(stat, {
+                    id: `stat_${channel}`,
+                    caption: `Статистические показатели`,
+                    header: true,
+                    fields: fields_stat,
+                } )
+            
+            m_results.innerHTML += '<hr></hr>'
+        }
     } )
 
 
