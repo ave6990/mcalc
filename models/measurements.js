@@ -1,39 +1,51 @@
 class Measurements {
     constructor() {
         this.devices = []
-        //this.readData()
+        this.readData()
     }
 
     readData(path = './data/measurements.json') {
-        const data = app.ReadFile('./data/measurements.json')
+        const data = app.ReadFile('./db/measurements.json')
         this.devices = JSON.parse(data)
         //this.writeData('./data/backup.json')
     }
 
-    writeData(path = './data/measurements.json') {
+    writeData(path = './db/measurements.json') {
         const data = JSON.stringify(this.devices)
         app.WriteFile(path, data)
     }
 
-    getDeviceID() {
-        this.devices.length
+    genDeviceID() {
+        let id = 0
+
+        if (this.devices.length > 0) {
+            id = this.devices[this.devices.length - 1].id + 1
+        }
+        return id
     }
 
     getDevice(id) {
-        return new Device(this.devices[id])
+        return new Device(this.devices[this.getDeviceIndex(id)])
+    }
+
+    getDeviceIndex(id) {
+        return this.devices.findIndex( (item) => {
+            return item.id == id
+        } )
     }
 
     setDevice(device) {
-        this.devices[device.id] = device.getJSON()
+        this.devices[this.getDeviceIndex(device.id)] = device.getJSON()
     }
                 
     addDevice(device) {
-        device.setID(this.getDeviceID())
-        this.devices.push(device.getJSON()) 
+        //const id = this.genDeviceID()
+        this.devices.push(Object.assign({}, device))
+        //this.devices.push(device.getJSON()) 
     }
 
-    delDevice(id) {
-        this.devices.splice(id, 1)
+    removeDevice(id) {
+        this.devices.splice(this.getDeviceIndex(id), 1)
     }
 }
 
@@ -46,38 +58,12 @@ class Device {
         this.setData(data)
     }
 
-    /** @debug: Add validation. */
     setData(data) {
         Object.assign(this, data)
-        /**for (const key of Object.keys(this)) {
-            if ([null, undefined, ''].indexOf(data[key])) {
-                this[key] = null
-            }
-        }*/
     }
 
     setDate(date) {
         this.date = date
-    }
-    
-    setCountNumber(number) {
-        this.count_number = number
-    }
-
-    setRegistryNumber(number) {
-        this.mi_registry_number = number
-    }
-
-    setType(type) {
-        this.mi_type = type
-    }
-
-    setManufactureYear(year) {
-        this.mi_manufacture_year = year
-    }
-
-    setOwner(owner) {
-        this.mi_owner = owner
     }
 
     setID(id) {

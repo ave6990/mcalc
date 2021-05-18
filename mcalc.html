@@ -16,14 +16,20 @@
             <header>
                 <p>Результаты измерений</p>
             </header>
-            <button id=btn_add_mi>Добавить СИ</button>
+            <div class=grid_3c>
+                <button id=btn_add_mi>Добавить СИ</button>
+                <button id=btn_edit_mi>Изменить СИ</button>
+                <button id=btn_del_mi>Удалить СИ</button>
+            </div>
             <section id=records>
 
             </section>
         </section>
         <section id=measurements>
-            <button id=btn_main>Назад</button>
-            <button id=btn_save_mi>Сохранить СИ</button>
+            <div class=grid_2c>
+                <button id=btn_save_mi>Сохранить СИ</button>
+                <button id=btn_cancel_mi>Отмена</button>
+            </div>
             <section id=mi_info>
                 <button id=test>Тестовые данные</button>
                 <header>
@@ -41,6 +47,8 @@
                 <input type=text id=mi_number>
                 <label>Год выпуска</label>
                 <input type=text id=mi_manufacture_year>
+                <label>Собственник</label>
+                <input type=text id=mi_owner>
             </section>
             <section id=measurement_data>
                 <header>
