@@ -56,14 +56,7 @@ class Measurements {
 
         let temp = this.devices.slice()
 
-        if (start > this.devices.length - 1) {
-            throw new ModelError('The initial index is greater than the lenght of the data set.')
-        }
-
-        if (count > start + this.devices.length) {
-            count = this.devices.length - start
-        }
-
+        app.ShowPopup([start, temp.length].join('\n'))
         if (filter_obj) {
             temp = temp.filter( (item) => {
                 for (const field of Object.keys(filter_obj)) {
@@ -76,6 +69,14 @@ class Measurements {
         }
 
         res.total_count = temp.length
+
+        if (start > temp.length - 1 && start >= count) {
+            throw new ModelError('The initial index is greater than the lenght of the data set.')
+        }
+
+        if (count > start + temp.length) {
+            count = temp.length - start
+        }
 
         if (sort_field == '') {
             res.records = temp.slice(start, start + count)

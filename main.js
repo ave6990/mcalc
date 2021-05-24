@@ -73,11 +73,14 @@ document.getElementById('btn_edit_mi').addEventListener('click', (event) => {
     }
 } )
 
+const showPageNumber = () => {
+    document.getElementById('page_number').value = `${state.page} из ${state.pages_count}`
+}
+
 document.getElementById('btn_prev').addEventListener('click', (event) => {
     const tb_page = document.getElementById('page_number')
     if (state.page > 1) {
         state.page--
-        tb_page.value = `${state.page} из ${state.pages_count}`
     }
     showDevices()
 } )
@@ -86,7 +89,6 @@ document.getElementById('btn_next').addEventListener('click', (event) => {
     const tb_page = document.getElementById('page_number')
     if (state.page < state.pages_count) {
         state.page++
-        tb_page.value = `${state.page} из ${state.pages_count}`
     }
     showDevices()
 } )
@@ -101,7 +103,6 @@ document.getElementById('page_number').addEventListener('change', (event) => {
         state.page = val
     }
 
-    event.target.value = `${state.page} из ${state.pages_count}`
     showDevices()
 } )
 
@@ -152,10 +153,24 @@ document.getElementById('btn_cancel_mi').addEventListener('click', (event) => {
 
 const showDevices = () => {
     const recs = document.getElementById('records')
-    const data = measurements.getDevices((state.page - 1) * state.pages, 
-        state.pages, state.sort, state.filter)
+    let data = {}
+
+    try {
+        data = measurements.getDevices((state.page - 1) * state.pages, 
+            state.pages, state.sort, state.filter)
+    } catch (e) {
+        if (state.page > 1) {
+            state.page--
+            data = measurements.getDevices((state.page - 1) * state.pages, 
+                state.pages, state.sort, state.filter)
+        } else {
+            throw e
+        }
+    }
+
     state.total_count = data.total_count
-    state.pages_count = parseInt(state.total_count / state.pages) + 1
+    state.pages_count = parseInt((state.total_count - 1) / state.pages) + 1
+    showPageNumber()
 
     recs.innerHTML = ''
     if (data.records.length > 0) {
