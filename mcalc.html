@@ -10,7 +10,7 @@
         <p>Метрологический калькулятор</p>
     </header>
     <!-- <nav>
-        <ul id=menu_items class=grid_3c>
+        <ul id=menu_items class=flex_style>
             <li id=btn_add_mi>Добавить СИ</li>
             <li id=btn_edit_mi>Редактировать СИ</li>
             <li id=btn_del_mi>Удалить СИ</li>
@@ -21,17 +21,22 @@
             <header>
                 <p>Результаты измерений</p>
             </header>
-            <div class=grid_3c>
+            <div class=flex_style>
                 <button id=btn_add_mi>Добавить СИ</button>
                 <button id=btn_edit_mi>Изменить СИ</button>
                 <button id=btn_del_mi>Удалить СИ</button>
+            </div>
+            <div id=pages_nav class=flex_style>
+                <button id=btn_prev><<</button>
+                <input type=text id=page_number value=1>
+                <button id=btn_next>>></button>
             </div>
             <section id=records>
 
             </section>
         </section>
         <section id=measurements>
-            <div class=grid_2c>
+            <div class=flex_style>
                 <button id=btn_save_mi>Сохранить СИ</button>
                 <button id=btn_cancel_mi>Отмена</button>
             </div>
@@ -72,7 +77,7 @@
                     '0-100', '20-100' и т. д.</p>
                 </details>
                 <input type=text id=range class=inline>
-                <div class=grid_3c>
+                <div class=flex_style>
                     <button id=btn_add_measure>Добавить</button>
                     <button id=btn_edit_measure>Изменить</button>
                     <button id=btn_del_measure>Удалить</button>

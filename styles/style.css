@@ -12,12 +12,10 @@ body {
 header {
     padding: 5px 0px;
     margin: 0px;
-/*    color: #034769;*/
     color: #fafafa;
     background: #034769;
     font-size: 28pt;
     text-align: center;
-/*    background: #3ca0d0;*/
 }
 
 section header {
@@ -62,6 +60,7 @@ nav li {
 nav li:hover {
     background: #086fa1;
 } */
+
 /* End Navigation styles */
 
 footer {
@@ -102,6 +101,10 @@ label {
     min-width: 30px;
 }
 
+#btn_prev, #btn_next {
+    width: 40px;
+}
+
 /* Table styles */
 table {
     display: block;
@@ -110,6 +113,16 @@ table {
     border-collapse: collapse;
     margin-top: 10px;
     overflow: scroll;
+}
+
+caption {
+    text-align: left;
+    padding-left: 40px;
+    background: #034769;
+    color: #fafafa;
+    border-width: 1px;
+    border-style: solid;
+    border-color: #086fa1;
 }
 
 td, th {
@@ -140,14 +153,12 @@ hr {
     border-color: #086fa1;
 }
 
-.grid_3c {
+/**.grid_3c {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
     grid-column-gap: 5px;
-}
+}*/
 
-.grid_2c {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-column-gap: 5px;
+.flex_style {
+    display: flex;
 }

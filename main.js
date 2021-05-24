@@ -96,12 +96,13 @@ document.getElementById('btn_del_mi').addEventListener('click', (event) => {
     measurements.writeData()
 } )
 
-const showDevices = () => {
+const showDevices = (page = 1, sort, filter) => {
     const recs = document.getElementById('records')
+    const devices = measurements.getDevices((page - 1) * 10, 10, sort, filter)
 
     recs.innerHTML = ''
     if (measurements.devices.length > 0) {
-        recs.innerHTML = ui.jsonToTable(measurements.devices, {
+        recs.innerHTML = ui.jsonToTable(devices, {
             id: 'devices',
             caption: 'Результаты',
             header: true,
@@ -145,23 +146,27 @@ document.getElementById('btn_add_measure').addEventListener('click', (event) => 
 
 const tableEventListener = () => {
     for (const table of document.getElementsByTagName('table')) {
-
         table.addEventListener('click', (event) => {
             for (const tr of document.getElementsByTagName('tr')) {
                 tr.classList.remove('selected_row')
             }
 
-            const cell = event.target.id
+            const tag = event.target.tagName.toLowerCase()
             const tr = event.target.parentElement
-            tr.classList.add('selected_row')
-            const [ type, channel, row, col ] = cell.split('_')
-            if (type == 'ch') {
-                const m_id = Number(document.getElementById(`ch_${channel}_${row}_0`).innerHTML)
-                readMeasurement(m_id)
-            }
-            if (type == 'devices') {
-                const dev_id = Number(document.getElementById(`devices_${channel}_0`).innerHTML)
-                device = measurements.getDevice(dev_id)
+            const [ type, ..._ ] = tr.id.split('_')
+
+            if (tag == 'td') {
+                tr.classList.add('selected_row')
+                const id = tr.firstElementChild.innerHTML
+                
+                if (type == 'ch') {
+                    readMeasurement(id)
+                } else if (type == 'devices') {
+                    device = measurements.getDevice(id)
+                }
+            } else if (tag == 'th') {
+                const sort_field = event.target.getAttribute('abbr')
+                showDevices(1, event.target.abbr)
             }
         })
     }
@@ -236,6 +241,7 @@ const showMeasurements = (device) => {
         red_error: 'γ_cp, %',
         sko: 'СКО',
     }
+
     let m_results = document.getElementById('measurements_results')
 
     m_results.innerHTML = ''
@@ -262,8 +268,7 @@ const showMeasurements = (device) => {
         m_results.innerHTML += '<hr></hr>'
     } )
 
-
-    document.getElementById('measurement_number').innerHTML = device.m_id
+    document.getElementById('measurement_number').innerHTML = device.genMeasurementID()
 }
  
 document.getElementById('test').addEventListener('click', (event) => {

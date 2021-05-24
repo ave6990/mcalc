@@ -15,6 +15,11 @@ class Measurements {
         app.WriteFile(path, data)
     }
 
+    backupData(path = './db/') {
+        const data = JSON.stringify(this.devices)
+        app.WriteFile(`${path}_${new Date()}.json.backup`, data)
+    }
+
     genDeviceID() {
         let id = 0
 
@@ -39,31 +44,81 @@ class Measurements {
     }
                 
     addDevice(device) {
-        //const id = this.genDeviceID()
-        this.devices.push(Object.assign({}, device))
-        //this.devices.push(device.getJSON()) 
+        this.devices.push(device.getJSON()) 
     }
 
     removeDevice(id) {
         this.devices.splice(this.getDeviceIndex(id), 1)
+    }
+
+    getDevices(start = 0, count = 10, sort_field = '', filter_obj = undefined) {
+        let temp = this.devices.slice()
+
+        if (start > this.devices.length - 1) {
+            throw new ModelError('The initial index is greater than the lenght of the data set.')
+        }
+
+        if (count > start + this.devices.length) {
+            count = this.devices.length - start
+        }
+
+        if (filter_obj) {
+            temp = temp.filter( (item) => {
+                for (const field of Object.keys(filter_obj)) {
+                    if (filter_obj[field] != item[field]) {
+                        return false
+                    }
+                }
+                return true
+            } )
+        }
+
+        if (sort_field == '') {
+            return temp
+        } else if (Object.keys(this.devices[0]).indexOf(sort_field) < 0) {
+            throw new ModelError('Wrong name of field.')
+        } else {
+            temp = temp.sort( (a, b) => {
+                if ((a[sort_field] > b[sort_field]) || 
+                        (b[sort_field] == '') || 
+                        (b[sort_field] == undefined)) {
+                    return -1
+                }
+                if ((a[sort_field] < b[sort_field]) || 
+                        (a[sort_field] == '') || 
+                        (a[sort_field] == undefined)) {
+                    return 1
+                }
+                return 0
+            } )
+
+            return temp.slice(start, start + count)
+        }
     }
 }
 
 class Device {
     measurements = []
     statistic = []
-    m_id = 1
 
     constructor(data) {
         this.setData(data)
+        this.measurementsIndexing()
     }
 
     setData(data) {
         Object.assign(this, data)
     }
 
+    /**
+     * @dependency lib/date.js
+     */
     setDate(date) {
-        this.date = date
+        this.date = mDate.toDate(date, true)
+    }
+
+    getDate() {
+        return mDate.toDOMString(this.date)
     }
 
     setID(id) {
@@ -82,9 +137,19 @@ class Device {
         } )
     }
 
+    genMeasurementID() {
+        this.measurementsIndexing()
+        return this.measurements.length
+    }
+
+    measurementsIndexing() {
+        this.measurements.map( (item, i) => {
+            item.id = i
+        } )
+    }
+
     addMeasurement(measurement) {
-        Object.assign(measurement, this.calculate(measurement), {id: this.m_id})
-        this.m_id++
+        Object.assign(measurement, this.calculate(measurement), {id: this.genMeasurementID()})
         this.measurements.push(measurement) 
 
         if (this.measurements.length > 2) {
@@ -105,6 +170,7 @@ class Device {
     removeMeasurement(id) {
         id = this.getMeasurementIndex(id)
         this.measurements.splice(id, 1)
+        this.measurementsIndexing()
     }
 
     getMeasurement(id) {
@@ -118,10 +184,10 @@ class Device {
     }
 
     calculate(measurement) {
-        measurement.m_value = measurement.m_value
+        //measurement.m_value = measurement.m_value
 
-        if (measurement.ref_value) {
-            measurement.ref_value = measurement.ref_value
+        if (measurement.ref_value || measurement.ref_value == 0) {
+            //measurement.ref_value = measurement.ref_value
             measurement.abs_error = metrology.absoluteError(
                 measurement.m_value, measurement.ref_value
             )
@@ -222,5 +288,16 @@ class Device {
 
     getJSON() {
         return Object.assign({}, this)
+    }
+}
+
+class ModelError {
+    constructor(message, cause) {
+        this.message = message
+        this.cause = cause
+        this.name = 'ModelError'
+        if (cause) {
+            this.stack = cause.stack
+        }
     }
 }
