@@ -162,3 +162,7 @@ hr {
 .flex_style {
     display: flex;
 }
+
+#delete_dialog {
+    background: #ffffe0;
+}

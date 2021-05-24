@@ -52,6 +52,8 @@ class Measurements {
     }
 
     getDevices(start = 0, count = 10, sort_field = '', filter_obj = undefined) {
+        const res = {}
+
         let temp = this.devices.slice()
 
         if (start > this.devices.length - 1) {
@@ -73,8 +75,10 @@ class Measurements {
             } )
         }
 
+        res.total_count = temp.length
+
         if (sort_field == '') {
-            return temp
+            res.records = temp.slice(start, start + count)
         } else if (Object.keys(this.devices[0]).indexOf(sort_field) < 0) {
             throw new ModelError('Wrong name of field.')
         } else {
@@ -92,8 +96,10 @@ class Measurements {
                 return 0
             } )
 
-            return temp.slice(start, start + count)
+            res.records = temp.slice(start, start + count)
         }
+
+        return res
     }
 }
 

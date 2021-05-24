@@ -1,6 +1,14 @@
 /** Called after application is started. */
 let measurements = {}
 let device = {}
+const state = {
+    page: 1,
+    sort: '',
+    filter: undefined,
+    pages: 10,
+    pages_count: 1,
+    total_count: 0,
+}
 
 /** Read the value from a text input fields. */
 const getVal = (id, func) => {
@@ -35,6 +43,8 @@ const toMainPage = () => {
 
 const OnStart = () => {
     document.getElementById('measurements').style.display = 'none'
+    document.getElementById('delete_dialog').style.display = 'none'
+    document.getElementById('page_number').value = `${state.page} из ${state.pages_count}`
     app.SetOrientation('Portrait')
     measurements = new Measurements()
     showDevices()
@@ -61,6 +71,56 @@ document.getElementById('btn_edit_mi').addEventListener('click', (event) => {
         showMeasurements(device)
         tableEventListener()
     }
+} )
+
+document.getElementById('btn_prev').addEventListener('click', (event) => {
+    const tb_page = document.getElementById('page_number')
+    if (state.page > 1) {
+        state.page--
+        tb_page.value = `${state.page} из ${state.pages_count}`
+    }
+    showDevices()
+} )
+
+document.getElementById('btn_next').addEventListener('click', (event) => {
+    const tb_page = document.getElementById('page_number')
+    if (state.page < state.pages_count) {
+        state.page++
+        tb_page.value = `${state.page} из ${state.pages_count}`
+    }
+    showDevices()
+} )
+
+document.getElementById('page_number').addEventListener('change', (event) => {
+    const val = parseInt(event.target.value.split(' ')[0])
+    if (val < 1 || isNaN(val)) {
+        state.page = 1
+    } else if (val > state.pages_count) {
+        state.page = state.pages_count
+    } else {
+        state.page = val
+    }
+
+    event.target.value = `${state.page} из ${state.pages_count}`
+    showDevices()
+} )
+
+document.getElementById('btn_del_mi').addEventListener('click', (event) => {
+    document.getElementById('delete_dialog').style.display = ''
+    document.getElementById('main').style.display = 'none'
+} )
+
+document.getElementById('btn_yes_del').addEventListener('click', (event) => {
+    measurements.removeDevice(device.id)
+    showDevices()
+    measurements.writeData()
+    document.getElementById('delete_dialog').style.display = 'none'
+    document.getElementById('main').style.display = ''
+} )    
+
+document.getElementById('btn_no_del').addEventListener('click', (event) => {
+    document.getElementById('delete_dialog').style.display = 'none'
+    document.getElementById('main').style.display = ''
 } )
 
 document.getElementById('btn_save_mi').addEventListener('click', (event) => {
@@ -90,21 +150,18 @@ document.getElementById('btn_cancel_mi').addEventListener('click', (event) => {
     toMainPage()
 } )
 
-document.getElementById('btn_del_mi').addEventListener('click', (event) => {
-    measurements.removeDevice(device.id)
-    showDevices()
-    measurements.writeData()
-} )
-
-const showDevices = (page = 1, sort, filter) => {
+const showDevices = () => {
     const recs = document.getElementById('records')
-    const devices = measurements.getDevices((page - 1) * 10, 10, sort, filter)
+    const data = measurements.getDevices((state.page - 1) * state.pages, 
+        state.pages, state.sort, state.filter)
+    state.total_count = data.total_count
+    state.pages_count = parseInt(state.total_count / state.pages) + 1
 
     recs.innerHTML = ''
-    if (measurements.devices.length > 0) {
-        recs.innerHTML = ui.jsonToTable(devices, {
+    if (data.records.length > 0) {
+        recs.innerHTML = ui.jsonToTable(data.records, {
             id: 'devices',
-            caption: 'Результаты',
+            caption: 'Таблица - Результаты',
             header: true,
             fields: {
                 id: 'ID',
@@ -155,6 +212,7 @@ const tableEventListener = () => {
             const tr = event.target.parentElement
             const [ type, ..._ ] = tr.id.split('_')
 
+            /** Select the row. */
             if (tag == 'td') {
                 tr.classList.add('selected_row')
                 const id = tr.firstElementChild.innerHTML
@@ -164,9 +222,11 @@ const tableEventListener = () => {
                 } else if (type == 'devices') {
                     device = measurements.getDevice(id)
                 }
-            } else if (tag == 'th') {
+            /** Sort the records. */
+            } else if (tag == 'th' && type == 'devices') {
                 const sort_field = event.target.getAttribute('abbr')
-                showDevices(1, event.target.abbr)
+                state.sort = event.target.abbr
+                showDevices()
             }
         })
     }
