@@ -44,6 +44,7 @@ const toMainPage = () => {
 const OnStart = () => {
     document.getElementById('measurements').style.display = 'none'
     document.getElementById('delete_dialog').style.display = 'none'
+    document.getElementById('filter').style.display = 'none'
     document.getElementById('page_number').value = `${state.page} из ${state.pages_count}`
     app.SetOrientation('Portrait')
     measurements = new Measurements()
@@ -123,6 +124,15 @@ document.getElementById('btn_no_del').addEventListener('click', (event) => {
     document.getElementById('delete_dialog').style.display = 'none'
     document.getElementById('main').style.display = ''
 } )
+
+/**document.getElementById('btn_filter').addEventListener('click', (event) => {
+    const filter_section = document.getElementById('filter')
+    if (filter_section.style.display == 'none') {
+        filter_section.style.display = ''
+    } else {
+        filter_section.style.display = 'none'
+    }
+} )*/
 
 document.getElementById('btn_save_mi').addEventListener('click', (event) => {
     toMainPage()

@@ -56,7 +56,6 @@ class Measurements {
 
         let temp = this.devices.slice()
 
-        app.ShowPopup([start, temp.length].join('\n'))
         if (filter_obj) {
             temp = temp.filter( (item) => {
                 for (const field of Object.keys(filter_obj)) {
@@ -80,8 +79,8 @@ class Measurements {
 
         if (sort_field == '') {
             res.records = temp.slice(start, start + count)
-        } else if (Object.keys(this.devices[0]).indexOf(sort_field) < 0) {
-            throw new ModelError('Wrong name of field.')
+        /**} else if (Object.keys(this.devices[0]).indexOf(sort_field) < 0) {
+            throw new ModelError('Wrong name of field.')*/
         } else {
             temp = temp.sort( (a, b) => {
                 if ((a[sort_field] > b[sort_field]) || 
