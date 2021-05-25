@@ -55,6 +55,7 @@ const OnStart = () => {
 document.getElementById('btn_add_mi').addEventListener('click', (event) => {
     toDevicePage()
     if (device.id) {
+        device = new Device(device)
         device.id = measurements.genDeviceID()
         readDevice()
     } else {
@@ -245,6 +246,7 @@ const tableEventListener = () => {
                 if (type == 'ch') {
                     readMeasurement(id)
                 } else if (type == 'devices') {
+                    app.ShowPopup(`getDevice(${id}) tableEventListener`)
                     device = measurements.getDevice(id)
                 }
             /** Sort the records. */

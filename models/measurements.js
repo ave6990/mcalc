@@ -114,6 +114,8 @@ class Device {
 
     setData(data) {
         Object.assign(this, data)
+        /** deep copy of measurements */
+        this.measurements = this.measurements.slice()
     }
 
     /**
@@ -155,8 +157,8 @@ class Device {
     }
 
     addMeasurement(measurement) {
-        Object.assign(measurement, this.calculate(measurement), {id: this.genMeasurementID()})
-        this.measurements.push(measurement) 
+        const data = Object.assign({}, measurement, this.calculate(measurement), {id: this.genMeasurementID()})
+        this.measurements.push(data) 
 
         if (this.measurements.length > 2) {
             this.calculateStatistics()
@@ -164,9 +166,9 @@ class Device {
     }
 
     setMeasurement(measurement, id) {
-        Object.assign(measurement, this.calculate(measurement), {id: id})
+        const data = Object.assign({}, measurement, this.calculate(measurement), {id: id})
         id = this.getMeasurementIndex(id)
-        this.measurements.splice(id, 1, measurement)
+        this.measurements.splice(id, 1, data)
 
         if (this.measurements.length > 2) {
             this.calculateStatistics()
