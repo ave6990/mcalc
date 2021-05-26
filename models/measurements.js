@@ -75,6 +75,8 @@ class Measurements {
 
         if (count > start + temp.length) {
             count = temp.length - start
+        } else if (count < 0) {
+            count = temp.length
         }
 
         if (sort_field == '') {
@@ -114,8 +116,9 @@ class Device {
 
     setData(data) {
         Object.assign(this, data)
-        /** deep copy of measurements */
+        /** deep copy of measurements and statistic */
         this.measurements = this.measurements.slice()
+        this.statistic = this.statistic.slice()
     }
 
     /**

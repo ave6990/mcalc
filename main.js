@@ -246,7 +246,6 @@ const tableEventListener = () => {
                 if (type == 'ch') {
                     readMeasurement(id)
                 } else if (type == 'devices') {
-                    app.ShowPopup(`getDevice(${id}) tableEventListener`)
                     device = measurements.getDevice(id)
                 }
             /** Sort the records. */
@@ -386,3 +385,21 @@ for (const id of mi_info_fields) {
 
     } )
 }
+
+document.getElementById('btn_export').addEventListener('click', (event) => {
+    const devices = measurements.getDevices(0, -1, state.sort, state.filter)
+    const table = ui.jsonToTable(devices.records, {
+        header: true,
+        fields: {
+            id: 'ID',
+            date: 'Дата',
+            count_number: 'Счет',
+            mi_type: 'Тип СИ',
+            mi_registry_number: 'ГРСИ',
+            mi_number: 'Зав. №',
+            mi_owner: 'Собственник',
+        },
+    } )
+    const data = xls.toXLS(table)
+    app.WriteFile(`./db/${mDate.toDOMString(new Date())}.xls`, data)
+} )
