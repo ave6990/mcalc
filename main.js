@@ -126,14 +126,32 @@ document.getElementById('btn_no_del').addEventListener('click', (event) => {
     document.getElementById('main').style.display = ''
 } )
 
-/**document.getElementById('btn_filter').addEventListener('click', (event) => {
+document.getElementById('btn_filter').addEventListener('click', (event) => {
     const filter_section = document.getElementById('filter')
     if (filter_section.style.display == 'none') {
         filter_section.style.display = ''
     } else {
         filter_section.style.display = 'none'
     }
-} )*/
+} )
+
+document.getElementById('btn_apply_filter').addEventListener('click', (event) => {
+    state.filter = {}
+    const filter_fields = ['date', 'count_number', 'mi_type', 'mi_number',
+        'mi_registry_number', 'mi_owner']
+    filter_fields.map( (field) => {
+        state.filter[field] = getVal(`filter_${field}`)
+    } )
+
+    document.getElementById('btn_filter').click()
+    showDevices()
+} )
+
+document.getElementById('btn_clear_filter').addEventListener('click', (event) => {
+    state.filter = undefined
+    document.getElementById('btn_filter').click()
+    showDevices()
+} )
 
 document.getElementById('btn_save_mi').addEventListener('click', (event) => {
     toMainPage()
@@ -402,4 +420,5 @@ document.getElementById('btn_export').addEventListener('click', (event) => {
     } )
     const data = xls.toXLS(table)
     app.WriteFile(`./db/${mDate.toDOMString(new Date())}.xls`, data)
+    app.ShowPopup('Данные сохранены')
 } )

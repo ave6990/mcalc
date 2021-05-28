@@ -58,14 +58,18 @@ class Measurements {
 
         if (filter_obj) {
             temp = temp.filter( (item) => {
+                let res = true 
+
                 for (const field of Object.keys(filter_obj)) {
-                    if (filter_obj[field] != item[field]) {
-                        return false
+                    if (filter_obj[field] != '' && filter_obj[field] != undefined) {
+                        if (!String(item[field]).match(new RegExp(`.*${filter_obj[field]}.*`))) {
+                            res = false
+                        }
                     }
                 }
-                return true
+                return res
             } )
-        }
+       }
 
         res.total_count = temp.length
 

@@ -10,11 +10,6 @@
         <p>Метрологический калькулятор</p>
     </header>
     <!-- <nav>
-        <ul id=menu_items class=flex_style>
-            <li id=btn_add_mi>Добавить СИ</li>
-            <li id=btn_edit_mi>Редактировать СИ</li>
-            <li id=btn_del_mi>Удалить СИ</li>
-        </ul>
     </nav> -->
     <main>
         <section id=main>
@@ -24,14 +19,17 @@
                 <button id=btn_edit_mi>Изменить СИ</button>
                 <button id=btn_del_mi>Удалить СИ</button>
             </div>
-            <!--<button id=btn_filter>Показать/скрыть фильтр</button> -->
+            <button id=btn_filter>Показать/скрыть фильтр</button>
             <section id=filter>
                 <header>
                     <p>Параметры фильтрации</p>
                 </header>
-                <button id=btn_clear_filter>Сбросить фильтр</button>
+                <div class=flex_style>
+                    <button id=btn_apply_filter>Применить</button>
+                    <button id=btn_clear_filter>Сбросить</button>
+                </div>
                 <label>Дата</label>
-                <input type=text id=filter_date>
+                <input type=date id=filter_date>
                 <label>Номер счета</label>
                 <input type=text id=filter_count_number>
                 <label>Тип СИ</label>
