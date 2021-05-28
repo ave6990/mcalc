@@ -51,7 +51,16 @@ class Measurements {
         this.devices.splice(this.getDeviceIndex(id), 1)
     }
 
-    getDevices(start = 0, count = 10, sort_field = '', filter_obj = undefined) {
+    /** Позволяет получить список приборов с заданными параметрами сортировки и
+     * фильтрации.
+     * @param {Integer} start - Начальный индекс выборки данных.
+     * @param {Integer} count - Количество записей.
+     * @param {String} sort_field - Поле по которому выполняется сортировка записей.
+     * @param {Integer} sort_order - Порядок сортировки: -1 - по убыванию, 1 - по возрастанию.
+     * @param {Object} - Объект содержит поля и значения по которым выполняется
+     * фильтрация.
+     * @retun {Object[]} - Массив записей. */
+    getDevices(start = 0, count = 10, sort_field = '', sort_order = 1, filter_obj = undefined) {
         const res = {}
 
         let temp = this.devices.slice()
@@ -92,12 +101,12 @@ class Measurements {
                 if ((a[sort_field] > b[sort_field]) || 
                         (b[sort_field] == '') || 
                         (b[sort_field] == undefined)) {
-                    return -1
+                    return 1 * sort_order
                 }
                 if ((a[sort_field] < b[sort_field]) || 
                         (a[sort_field] == '') || 
                         (a[sort_field] == undefined)) {
-                    return 1
+                    return -1 * sort_order
                 }
                 return 0
             } )

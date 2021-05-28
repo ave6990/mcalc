@@ -4,6 +4,7 @@ let device = {}
 const state = {
     page: 1,
     sort: '',
+    sort_order: -1,
     filter: undefined,
     pages: 10,
     pages_count: 1,
@@ -186,12 +187,12 @@ const showDevices = () => {
 
     try {
         data = measurements.getDevices((state.page - 1) * state.pages, 
-            state.pages, state.sort, state.filter)
+            state.pages, state.sort, state.sort_order, state.filter)
     } catch (e) {
         if (state.page > 1) {
             state.page--
             data = measurements.getDevices((state.page - 1) * state.pages, 
-                state.pages, state.sort, state.filter)
+                state.pages, state.sort, state.sort_order, state.filter)
         } else {
             throw e
         }
@@ -269,7 +270,14 @@ const tableEventListener = () => {
             /** Sort the records. */
             } else if (tag == 'th' && type == 'devices') {
                 const sort_field = event.target.getAttribute('abbr')
-                state.sort = event.target.abbr
+                
+                if (state.sort == event.target.abbr) {
+                    state.sort_order = state.sort_order * -1
+                } else {
+                    state.sort_order = -1
+                    state.sort = event.target.abbr
+                }
+
                 showDevices()
             }
         })
