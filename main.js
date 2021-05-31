@@ -11,6 +11,8 @@ const state = {
     total_count: 0,
 }
 
+pages = ['main', 'measurements', 'delete_dialog']
+
 /** Read the value from a text input fields. */
 const getVal = (id, func) => {
     const res = document.getElementById(id).value   
@@ -31,15 +33,18 @@ for (const element of document.getElementsByTagName('input')) {
     })
 }
 
-const toDevicePage = () => {
-    document.getElementById('measurements').style.display = ''
-    document.getElementById('measurements_results').innerHTML = ''
-    document.getElementById('main').style.display = 'none'
-}
-
-const toMainPage = () => {
-    document.getElementById('measurements').style.display = 'none'
-    document.getElementById('main').style.display = ''
+/**
+ * Смена рабочего окна (видового экрана).
+ * @param {String} page_id - Id html-элемента (section) содержащего видовой экран.
+ */
+const toPage = (page_id) => {
+    for (const page of pages) {
+        if (page == page_id) {
+            document.getElementById(page).style.display = ''
+        } else {
+            document.getElementById(page).style.display = 'none'
+        }
+    }
 }
 
 const OnStart = () => {
@@ -54,7 +59,7 @@ const OnStart = () => {
 }
 
 document.getElementById('btn_add_mi').addEventListener('click', (event) => {
-    toDevicePage()
+    toPage('measurements')
     if (device.id) {
         device = new Device(device)
         device.id = measurements.genDeviceID()
@@ -68,7 +73,7 @@ document.getElementById('btn_add_mi').addEventListener('click', (event) => {
 } )
 
 document.getElementById('btn_edit_mi').addEventListener('click', (event) => {
-    toDevicePage()
+    toPage('measurements')
     if (device.id) {
         readDevice()
         showMeasurements(device)
@@ -109,23 +114,32 @@ document.getElementById('page_number').addEventListener('change', (event) => {
     showDevices()
 } )
 
+/**
+ * Диалог удаления записей.
+ * @param {Function} yesEventListener - Функция обработки события нажатия кнопки "Да".
+ * @param {String} view - Id видового экрана (section id).
+ */
+const deleteDialog = (yesEventListener, view) => {
+    toPage('delete_dialog')
+    document.getElementById('btn_yes_del').onclick = () => {
+       yesEventListener()
+       toPage(view)
+    }
+    document.getElementById('btn_no_del').onclick = () => {
+        document.getElementById('btn_yes_del').onclick = () => {}
+        toPage(view)
+    }
+}
+
 document.getElementById('btn_del_mi').addEventListener('click', (event) => {
-    document.getElementById('delete_dialog').style.display = ''
-    document.getElementById('main').style.display = 'none'
-} )
-
-document.getElementById('btn_yes_del').addEventListener('click', (event) => {
-    measurements.removeDevice(device.id)
-    showDevices()
-    measurements.writeData()
-    document.getElementById('delete_dialog').style.display = 'none'
-    document.getElementById('main').style.display = ''
+    deleteDialog(() => {
+            measurements.removeDevice(device.id)
+            showDevices()
+            measurements.writeData()
+        },
+        'main'
+    )
 } )    
-
-document.getElementById('btn_no_del').addEventListener('click', (event) => {
-    document.getElementById('delete_dialog').style.display = 'none'
-    document.getElementById('main').style.display = ''
-} )
 
 document.getElementById('btn_filter').addEventListener('click', (event) => {
     const filter_section = document.getElementById('filter')
@@ -155,7 +169,7 @@ document.getElementById('btn_clear_filter').addEventListener('click', (event) =>
 } )
 
 document.getElementById('btn_save_mi').addEventListener('click', (event) => {
-    toMainPage()
+    toPage('main')
     Object.assign(device, {
         date: document.getElementById('date').value,
         count_number: getVal('count_number'),
@@ -178,7 +192,7 @@ document.getElementById('btn_save_mi').addEventListener('click', (event) => {
 } )
 
 document.getElementById('btn_cancel_mi').addEventListener('click', (event) => {
-    toMainPage()
+    toPage('main')
 } )
 
 const showDevices = () => {
@@ -297,13 +311,16 @@ document.getElementById('btn_edit_measure').addEventListener('click', (event) =>
 } )
 
 document.getElementById('btn_del_measure').addEventListener('click', (event) => {
-    if (device.measurements.length > 0) {
-        const id = Number(document.getElementById('measurement_number').innerHTML)
-
-        device.removeMeasurement(id)
-        showMeasurements(device)
-        tableEventListener()
-    }
+    deleteDialog( () => {
+            if (device.measurements.length > 0) {
+                const id = Number(document.getElementById('measurement_number').innerHTML)
+                device.removeMeasurement(id)
+                showMeasurements(device)
+                tableEventListener()
+            }
+        },
+        'measurements'
+    )
 } )
 
 /** Insert data from device model to a form fields in devices info section */
