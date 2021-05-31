@@ -10,15 +10,14 @@ const state = {
     pages_count: 1,
     total_count: 0,
 }
-
 pages = ['main', 'measurements', 'delete_dialog']
 
 /** Read the value from a text input fields. */
-const getVal = (id, func) => {
+const getVal = (id, convert_func) => {
     const res = document.getElementById(id).value   
     if (res) {
-        if (func) {
-            return func(res)
+        if (convert_func) {
+            return convert_func(res)
         }
         return res
     } else {
@@ -48,8 +47,7 @@ const toPage = (page_id) => {
 }
 
 const OnStart = () => {
-    document.getElementById('measurements').style.display = 'none'
-    document.getElementById('delete_dialog').style.display = 'none'
+    toPage('main')
     document.getElementById('filter').style.display = 'none'
     document.getElementById('page_number').value = `${state.page} из ${state.pages_count}`
     app.SetOrientation('Portrait')
@@ -237,10 +235,11 @@ const showDevices = () => {
 }
 
 const measure = () => {
-    if (getVal('measured_value')) {
+    if (getVal('m_value')) {
         return {
             channel: getVal('channel'),
-            m_value: getVal('measured_value', Number),
+            units: getVal('units'),
+            m_value: getVal('m_value', Number),
             ref_value: getVal('ref_value', Number),
             range: getVal('range'),
         }
@@ -337,22 +336,22 @@ const readDevice = () => {
 /** Insert measurement data to a form fields in measuement section. */
 const readMeasurement = (id) => {
     const vals = device.getMeasurement(id) 
-    fields = {
-        channel: vals.channel,
-        measured_value: vals.m_value,
-        ref_value: vals.ref_value,
-        range: vals.range,
-    }
+    fields = ['channel', 'units', 'm_value', 'ref_value', 'range']
 
     document.getElementById('measurement_number').innerHTML = id
-    for (const field of Object.keys(fields)) {
-        document.getElementById(field).value = fields[field]
+    for (const field of fields) {
+        if (vals[field] == undefined) {
+            document.getElementById(field).value = ''
+        } else {
+            document.getElementById(field).value = vals[field]
+        }
     }
 }
 
 const showMeasurements = (device) => {
     const fields = {
         id: 'id',
+        units: 'Ед. изм.',
         ref_value: 'X_ref',
         m_value: 'X_i',
         range: 'R',
@@ -362,6 +361,7 @@ const showMeasurements = (device) => {
     }
 
     const fields_stat = {
+        units: 'Ед. изм.',
         ref_value: 'X_ref',
         average_value: 'X_i_cp',
         range: 'R',
@@ -408,7 +408,7 @@ document.getElementById('test').addEventListener('click', (event) => {
         mi_manufacture_year: 2018,
         range: '0-100',
         channel: 'H2S',
-        measured_value: 51,
+        m_value: 51,
         ref_value: 50,
     }
     
@@ -440,10 +440,45 @@ document.getElementById('btn_export').addEventListener('click', (event) => {
             mi_type: 'Тип СИ',
             mi_registry_number: 'ГРСИ',
             mi_number: 'Зав. №',
+            mi_manufacture_year: 'Год изготовления',
             mi_owner: 'Собственник',
         },
     } )
     const data = xls.toXLS(table)
     app.WriteFile(`./db/${mDate.toDOMString(new Date())}.xls`, data)
+
+    /**app.ShowPopup('Данные сохраняются')
+
+    const fields = {
+        id: 'ID',
+        date: 'Дата',
+        count_number: 'Счет',
+        mi_type: 'Тип СИ',
+        mi_registry_number: 'ГРСИ',
+        mi_number: 'Зав. №',
+        mi_manufacture_year: 'Год изготовления',
+        mi_owner: 'Собственник',
+    }
+
+    const data = []
+
+    for (const device of devices.records) {
+        const obj = {}
+        for (const field of Object.keys(fields)) {
+            obj[field] = devices[field]
+        }
+        data.push(obj)
+    }
+
+    const ws = XLSX.utils.json_to_sheet(data)
+    const wb = XLSX.utils.book_new()
+    XLSX.utils.book_append_sheet(wb, ws, "Results")
+    const wbout = XLSX.write(wb, {
+        bookType: 'xlsx',
+        type: 'buffer',
+    } )
+
+    app.WriteFile(`./db/${mDate.toDOMString(new Date())}.xlsx`, wbout)*/
+    
     app.ShowPopup('Данные сохранены')
 } )
