@@ -238,7 +238,6 @@ const measure = () => {
     if (getVal('m_value')) {
         return {
             channel: getVal('channel'),
-            units: getVal('units'),
             m_value: getVal('m_value', Number),
             ref_value: getVal('ref_value', Number),
             range: getVal('range'),
@@ -336,7 +335,7 @@ const readDevice = () => {
 /** Insert measurement data to a form fields in measuement section. */
 const readMeasurement = (id) => {
     const vals = device.getMeasurement(id) 
-    fields = ['channel', 'units', 'm_value', 'ref_value', 'range']
+    fields = ['channel', 'm_value', 'ref_value', 'range']
 
     document.getElementById('measurement_number').innerHTML = id
     for (const field of fields) {
@@ -351,7 +350,6 @@ const readMeasurement = (id) => {
 const showMeasurements = (device) => {
     const fields = {
         id: 'id',
-        units: 'Ед. изм.',
         ref_value: 'X_ref',
         m_value: 'X_i',
         range: 'R',
@@ -361,7 +359,6 @@ const showMeasurements = (device) => {
     }
 
     const fields_stat = {
-        units: 'Ед. изм.',
         ref_value: 'X_ref',
         average_value: 'X_i_cp',
         range: 'R',
