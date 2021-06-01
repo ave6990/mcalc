@@ -53,29 +53,26 @@ const OnStart = () => {
     app.SetOrientation('Portrait')
     measurements = new Measurements()
     showDevices()
-    tableEventListener()
 }
 
 document.getElementById('btn_add_mi').addEventListener('click', (event) => {
-    toPage('measurements')
     if (device.id) {
         device = new Device(device)
         device.id = measurements.genDeviceID()
-        readDevice()
     } else {
         device = new Device({id: measurements.genDeviceID()})
         document.getElementById('date').value = mDate.toDOMString(new Date())
     }
+    readDevice()
+    toPage('measurements')
     showMeasurements(device)
-    tableEventListener()
 } )
 
 document.getElementById('btn_edit_mi').addEventListener('click', (event) => {
-    toPage('measurements')
     if (device.id) {
+        toPage('measurements')
         readDevice()
         showMeasurements(device)
-        tableEventListener()
     }
 } )
 
@@ -259,40 +256,56 @@ document.getElementById('btn_add_measure').addEventListener('click', (event) => 
 })
 
 const tableEventListener = () => {
-    for (const table of document.getElementsByTagName('table')) {
-        table.addEventListener('click', (event) => {
-            for (const tr of document.getElementsByTagName('tr')) {
-                tr.classList.remove('selected_row')
+    const _eventListener = (event) => {
+        const tag = event.target.tagName.toLowerCase()
+        const tr = event.target.parentElement
+        const [ type, ..._ ] = tr.id.split('_')
+
+        for (const elem of document.getElementsByClassName('selected_row')) {
+            if (elem.id != tr.id) {
+                elem.classList.toggle('selected_row')
             }
+        }
 
-            const tag = event.target.tagName.toLowerCase()
-            const tr = event.target.parentElement
-            const [ type, ..._ ] = tr.id.split('_')
-
-            /** Select the row. */
-            if (tag == 'td') {
-                tr.classList.add('selected_row')
-                const id = tr.firstElementChild.innerHTML
-                
-                if (type == 'ch') {
-                    readMeasurement(id)
-                } else if (type == 'devices') {
+        /** Select the row. */
+        if (tag == 'td') {
+            tr.classList.toggle('selected_row')
+            const id = tr.firstElementChild.innerHTML
+            
+            if (type == 'ch') {
+                readMeasurement(id)
+            } else if (type == 'devices') {
+                if (tr.classList.contains('selected_row')) {
                     device = measurements.getDevice(id)
-                }
-            /** Sort the records. */
-            } else if (tag == 'th' && type == 'devices') {
-                const sort_field = event.target.getAttribute('abbr')
-                
-                if (state.sort == event.target.abbr) {
-                    state.sort_order = state.sort_order * -1
                 } else {
-                    state.sort_order = -1
-                    state.sort = event.target.abbr
+                    device = new Device()
                 }
-
-                showDevices()
             }
-        })
+        /** Sort the records. */
+        } else if (tag == 'th' && type == 'devices') {
+            const sort_field = event.target.getAttribute('abbr')
+            
+            if (state.sort == event.target.abbr) {
+                state.sort_order = state.sort_order * -1
+            } else {
+                state.sort_order = -1
+                state.sort = event.target.abbr
+            }
+
+            showDevices()
+        }
+    }
+
+    for (const table of document.getElementsByTagName('table')) {
+        /** @debug Не удаляет обработчик событий, в результате со временем в таблице
+         * накапливаются одинаковые обработчики событий, которые срабатывают друг
+         * за другом.
+         * table.removeEventListener('click', _eventListener)
+         * table.addEventListener('click', _eventListener)
+         *
+         * table.onclick не может задать более одного обработчика событий
+         */
+        table.onclick = _eventListener
     }
 }
 
@@ -314,7 +327,6 @@ document.getElementById('btn_del_measure').addEventListener('click', (event) => 
                 const id = Number(document.getElementById('measurement_number').innerHTML)
                 device.removeMeasurement(id)
                 showMeasurements(device)
-                tableEventListener()
             }
         },
         'measurements'
@@ -395,6 +407,7 @@ const showMeasurements = (device) => {
     } )
 
     document.getElementById('measurement_number').innerHTML = device.genMeasurementID()
+    tableEventListener()
 }
  
 document.getElementById('test').addEventListener('click', (event) => {
