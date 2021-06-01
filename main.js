@@ -1,6 +1,8 @@
 /** Called after application is started. */
 let measurements = {}
 let device = {}
+let selected_measurement = false
+
 const state = {
     page: 1,
     sort: '',
@@ -127,13 +129,15 @@ const deleteDialog = (yesEventListener, view) => {
 }
 
 document.getElementById('btn_del_mi').addEventListener('click', (event) => {
-    deleteDialog(() => {
-            measurements.removeDevice(device.id)
-            showDevices()
-            measurements.writeData()
-        },
-        'main'
-    )
+    if (device.id) {
+        deleteDialog(() => {
+                measurements.removeDevice(device.id)
+                showDevices()
+                measurements.writeData()
+            },
+            'main'
+        )
+    }
 } )    
 
 document.getElementById('btn_filter').addEventListener('click', (event) => {
@@ -182,7 +186,6 @@ document.getElementById('btn_save_mi').addEventListener('click', (event) => {
     }
 
     showDevices()
-    tableEventListener()
     measurements.writeData()
 } )
 
@@ -213,21 +216,23 @@ const showDevices = () => {
 
     recs.innerHTML = ''
     if (data.records.length > 0) {
-        recs.innerHTML = ui.jsonToTable(data.records, {
-            id: 'devices',
-            caption: 'Таблица - Результаты',
-            header: true,
-            fields: {
-                id: 'ID',
-                date: 'Дата',
-                count_number: 'Счет',
-                mi_type: 'Тип СИ',
-                mi_registry_number: 'ГРСИ',
-                mi_number: 'Зав. №',
-                mi_owner: 'Собственник',
-            },
-        } )
-        tableEventListener()
+        recs.appendChild(
+            ui.jsonToTable(data.records, {
+                id: 'devices',
+                caption: 'Таблица - Результаты',
+                header: true,
+                fields: {
+                    id: 'ID',
+                    date: 'Дата',
+                    count_number: 'Счет',
+                    mi_type: 'Тип СИ',
+                    mi_registry_number: 'ГРСИ',
+                    mi_number: 'Зав. №',
+                    mi_owner: 'Собственник',
+                },
+                event_listener: devicesEventListener,
+            } )
+        )
     }
 }
 
@@ -252,85 +257,72 @@ document.getElementById('btn_add_measure').addEventListener('click', (event) => 
         showMeasurements(device)
     }
     
-    tableEventListener()
 })
 
-const tableEventListener = () => {
-    const _eventListener = (event) => {
-        const tag = event.target.tagName.toLowerCase()
-        const tr = event.target.parentElement
-        const [ type, ..._ ] = tr.id.split('_')
-
-        for (const elem of document.getElementsByClassName('selected_row')) {
-            if (elem.id != tr.id) {
-                elem.classList.toggle('selected_row')
-            }
+const devicesEventListener = (event) => {
+    const tag = event.target.tagName.toLowerCase()
+    const tr = event.target.parentElement
+    
+    if (tag == 'td') {
+        const id = tr.firstElementChild.innerHTML
+        
+        if (tr.classList.contains('selected_row')) {
+            device = measurements.getDevice(id)
+        } else {
+            device = new Device()
+        }
+    /** Sort the records. */
+    } else if (tag == 'th') {
+        const sort_field = event.target.abbr
+        
+        if (state.sort == sort_field) {
+            state.sort_order = state.sort_order * -1
+        } else {
+            state.sort_order = -1
+            state.sort = sort_field
         }
 
-        /** Select the row. */
-        if (tag == 'td') {
-            tr.classList.toggle('selected_row')
-            const id = tr.firstElementChild.innerHTML
-            
-            if (type == 'ch') {
-                readMeasurement(id)
-            } else if (type == 'devices') {
-                if (tr.classList.contains('selected_row')) {
-                    device = measurements.getDevice(id)
-                } else {
-                    device = new Device()
-                }
-            }
-        /** Sort the records. */
-        } else if (tag == 'th' && type == 'devices') {
-            const sort_field = event.target.getAttribute('abbr')
-            
-            if (state.sort == event.target.abbr) {
-                state.sort_order = state.sort_order * -1
-            } else {
-                state.sort_order = -1
-                state.sort = event.target.abbr
-            }
-
-            showDevices()
-        }
+        showDevices()
     }
+}
 
-    for (const table of document.getElementsByTagName('table')) {
-        /** @debug Не удаляет обработчик событий, в результате со временем в таблице
-         * накапливаются одинаковые обработчики событий, которые срабатывают друг
-         * за другом.
-         * table.removeEventListener('click', _eventListener)
-         * table.addEventListener('click', _eventListener)
-         *
-         * table.onclick не может задать более одного обработчика событий
-         */
-        table.onclick = _eventListener
+const measurementEventListener = (event) => {
+    const tag = event.target.tagName.toLowerCase()
+    const tr = event.target.parentElement
+    
+    if (tr.classList.contains('selected_row') && tag == 'td') {
+        const id = tr.firstElementChild.innerHTML
+        readMeasurement(id)
+        selected_measurement = true
+    } else {
+        selected_measurement = false
     }
 }
 
 document.getElementById('btn_edit_measure').addEventListener('click', (event) => {
-    const in_data = measure()
-    const id = Number(document.getElementById('measurement_number').innerHTML)
+    if (selected_measurement) {
+        const in_data = measure()
+        const id = Number(document.getElementById('measurement_number').innerHTML)
 
-    if (in_data) {
-        device.setMeasurement(in_data, id)
-        showMeasurements(device)
+        if (in_data) {
+            device.setMeasurement(in_data, id)
+            showMeasurements(device)
+        }
     }
-    
-    tableEventListener()
 } )
 
 document.getElementById('btn_del_measure').addEventListener('click', (event) => {
-    deleteDialog( () => {
-            if (device.measurements.length > 0) {
-                const id = Number(document.getElementById('measurement_number').innerHTML)
-                device.removeMeasurement(id)
-                showMeasurements(device)
-            }
-        },
-        'measurements'
-    )
+    if (selected_measurement) {
+        deleteDialog( () => {
+                if (device.measurements.length > 0) {
+                    const id = Number(document.getElementById('measurement_number').innerHTML)
+                    device.removeMeasurement(id)
+                    showMeasurements(device)
+                }
+            },
+            'measurements'
+        )
+    }
 } )
 
 /** Insert data from device model to a form fields in devices info section */
@@ -384,30 +376,32 @@ const showMeasurements = (device) => {
 
     m_results.innerHTML = ''
 
-    device.getUnique('channel').map( (channel) => {
-        m_results.innerHTML +=
+    for (const channel of device.getUnique('channel')) {
+        m_results.appendChild(
             ui.jsonToTable(device.getMeasurements(channel), {
                 id: `ch_${channel}`,
                 caption: `Канал - ${channel}`,
                 header: true,
                 fields: fields,
+                event_listener: measurementEventListener,
             } )
+        )
 
         const stat = device.getStatistic(channel)
         if (stat.length > 0) {
-            m_results.innerHTML +=
+            m_results.appendChild(
                 ui.jsonToTable(stat, {
                     id: `stat_${channel}`,
                     caption: `Статистические показатели`,
                     header: true,
                     fields: fields_stat,
                 } )
+            )
         }
-        m_results.innerHTML += '<hr></hr>'
-    } )
+        m_results.appendChild(document.createElement('hr'))
+    } 
 
     document.getElementById('measurement_number').innerHTML = device.genMeasurementID()
-    tableEventListener()
 }
  
 document.getElementById('test').addEventListener('click', (event) => {
@@ -453,7 +447,7 @@ document.getElementById('btn_export').addEventListener('click', (event) => {
             mi_manufacture_year: 'Год изготовления',
             mi_owner: 'Собственник',
         },
-    } )
+    } ).innerHTML
     const data = xls.toXLS(table)
     app.WriteFile(`./db/${mDate.toDOMString(new Date())}.xls`, data)
 
