@@ -49,8 +49,8 @@ const toPage = (page_id) => {
 }
 
 const OnStart = () => {
-    toPage('main')
     document.getElementById('filter').style.display = 'none'
+    toPage('main')
     document.getElementById('page_number').value = `${state.page} из ${state.pages_count}`
     app.SetOrientation('Portrait')
     measurements = new Measurements()
@@ -156,6 +156,7 @@ document.getElementById('btn_apply_filter').addEventListener('click', (event) =>
     filter_fields.map( (field) => {
         state.filter[field] = getVal(`filter_${field}`)
     } )
+    state.page = 1
 
     document.getElementById('btn_filter').click()
     showDevices()
