@@ -231,7 +231,12 @@ const showDevices = () => {
                     mi_number: 'Зав. №',
                     mi_owner: 'Собственник',
                 },
-                event_listener: devicesEventListener,
+                event_listener: {
+                    click: [
+                        ui.event_listeners.selectableRows,
+                        devicesEventListener,
+                    ],
+                }
             } )
         )
     }
@@ -384,7 +389,13 @@ const showMeasurements = (device) => {
                 caption: `Канал - ${channel}`,
                 header: true,
                 fields: fields,
-                event_listener: measurementEventListener,
+                event_listener: {
+                    click: [
+                        ui.event_listeners.selectableRows,
+                        measurementEventListener,
+                        //ui.event_listeners.editableCells,
+                    ],
+                }
             } )
         )
 
