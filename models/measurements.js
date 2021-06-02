@@ -79,6 +79,16 @@ class Measurements {
                             if (mDate.toDate(item['date'], true) > mDate.toDate(filter_obj[field], true)) {
                                 res = false
                             }
+                        } else if (field == 'verification_type') {
+                            const primary = filter_obj[field] == 'первичная'
+                            if (primary != item.primary_verification) {
+                                res = false
+                            }
+                        } else if (field == 'applicability') {
+                            const result = filter_obj[field] == 'пригодно'
+                            if (result != item[field] && item[field] != undefined) {
+                                res = false
+                            }
                         } else if (!String(item[field]).match(new RegExp(`.*${filter_obj[field]}.*`))) {
                             res = false
                         }

@@ -152,7 +152,7 @@ document.getElementById('btn_filter').addEventListener('click', (event) => {
 document.getElementById('btn_apply_filter').addEventListener('click', (event) => {
     state.filter = {}
     const filter_fields = ['date_start', 'date_end', 'count_number', 'mi_type', 'mi_number',
-        'mi_registry_number', 'mi_owner']
+        'mi_registry_number', 'mi_owner', 'verification_type', 'applicability']
     filter_fields.map( (field) => {
         state.filter[field] = getVal(`filter_${field}`)
     } )
@@ -173,6 +173,17 @@ document.getElementById('btn_save_mi').addEventListener('click', (event) => {
     Object.assign(device, {
         date: document.getElementById('date').value,
         count_number: getVal('count_number'),
+        primary_verification: getVal('verification_type', (val) => {
+            return val == 'первичная'
+        } ),
+        applicability: getVal('applicability', (val) => {
+            if (val == 'пригодно') {
+                return true
+            } else if (val == 'непригодно') {
+                return false
+            }
+            return undefined
+        } ),
         mi_type: getVal('mi_type'),
         mi_registry_number: getVal('mi_registry_number'),
         mi_number: getVal('mi_number'),
@@ -340,6 +351,20 @@ const readDevice = () => {
     for (const field of fields) {
         const val = device[field] || ''
         document.getElementById(field).value = val
+    }
+
+    if (device.primary_verification) {
+        document.getElementById('verification_type').value = 'первичная'
+    } else {
+        document.getElementById('verification_type').value = 'периодическая'
+    }
+
+    if (device.applicability) {
+        document.getElementById('applicability').value = 'пригодно'
+    } else if (device.applicability != undefined) {
+        document.getElementById('applicability').value = 'непригодно'
+    } else {
+        document.getElementById('applicability').value = ''
     }
 }
 

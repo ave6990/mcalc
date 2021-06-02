@@ -45,6 +45,18 @@
                 <input type=text id=filter_mi_number>
                 <label>Собственник</label>
                 <input type=text id=filter_mi_owner>
+                <label>Вид поверки</label>
+                <select id=filter_verification_type>
+                    <option default></option>
+                    <option>периодическая</option>
+                    <option>первичная</option>
+                </select>
+                <label>Пригодность СИ</label>
+                <select id=filter_applicability>
+                    <option default></option>
+                    <option>пригодно</option>
+                    <option>непригодно</option>
+                </select>
             </section>
             <header>
                 <p>Результаты поверки</p>
@@ -70,15 +82,31 @@
                 <button id=btn_save_mi>Сохранить СИ</button>
                 <button id=btn_cancel_mi>Отмена</button>
             </div>
-            <section id=mi_info>
+            <section id=verification_info>
                 <button id=test>Тестовые данные</button>
                 <header>
-                    <p>Данные СИ</p>
+                    <p>Информация о поверке</p>
                 </header>
                 <label>Дата поверки</label>
                 <input type=date id=date>
                 <label>Номер счета</label>
                 <input type=text id=count_number>
+                <label>Вид поверки</label>
+                <select id=verification_type>
+                    <option default>периодическая</option>
+                    <option>первичная</option>
+                </select>
+                <label>Пригодность СИ</label>
+                <select id=applicability>
+                    <option default></option>
+                    <option>пригодно</option>
+                    <option>непригодно</option>
+                </select>
+            </section>
+            <section id=mi_info>
+                <header>
+                    <p>Данные СИ</p>
+                </header>
                 <label>Тип СИ</label>
                 <input type=text id=mi_type>
                 <label>Регистрационный номер</label>
