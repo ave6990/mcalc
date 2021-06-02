@@ -71,7 +71,15 @@ class Measurements {
 
                 for (const field of Object.keys(filter_obj)) {
                     if (filter_obj[field] != '' && filter_obj[field] != undefined) {
-                        if (!String(item[field]).match(new RegExp(`.*${filter_obj[field]}.*`))) {
+                        if (field == 'date_start') {
+                            if (mDate.toDate(item['date'], true) < mDate.toDate(filter_obj[field], true)) {
+                                res = false
+                            }
+                        } else if (field == 'date_end') {
+                            if (mDate.toDate(item['date'], true) > mDate.toDate(filter_obj[field], true)) {
+                                res = false
+                            }
+                        } else if (!String(item[field]).match(new RegExp(`.*${filter_obj[field]}.*`))) {
                             res = false
                         }
                     }

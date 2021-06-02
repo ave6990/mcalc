@@ -29,7 +29,12 @@
                     <button id=btn_clear_filter>Сбросить</button>
                 </div>
                 <label>Дата</label>
-                <input type=date id=filter_date>
+                <div class=flex_style>
+                    <span>с </span>
+                    <input type=date id=filter_date_start>
+                    <span> по </span>
+                    <input type=date id=filter_date_end>
+                </div>
                 <label>Номер счета</label>
                 <input type=text id=filter_count_number>
                 <label>Тип СИ</label>

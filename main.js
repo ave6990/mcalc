@@ -151,7 +151,7 @@ document.getElementById('btn_filter').addEventListener('click', (event) => {
 
 document.getElementById('btn_apply_filter').addEventListener('click', (event) => {
     state.filter = {}
-    const filter_fields = ['date', 'count_number', 'mi_type', 'mi_number',
+    const filter_fields = ['date_start', 'date_end', 'count_number', 'mi_type', 'mi_number',
         'mi_registry_number', 'mi_owner']
     filter_fields.map( (field) => {
         state.filter[field] = getVal(`filter_${field}`)
@@ -202,6 +202,7 @@ const showDevices = () => {
         data = measurements.getDevices((state.page - 1) * state.pages, 
             state.pages, state.sort, state.sort_order, state.filter)
     } catch (e) {
+        app.ShowPopup(e.stack)
         if (state.page > 1) {
             state.page--
             data = measurements.getDevices((state.page - 1) * state.pages, 
