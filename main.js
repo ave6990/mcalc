@@ -55,6 +55,10 @@ const OnStart = () => {
     app.SetOrientation('Portrait')
     measurements = new Measurements()
     showDevices()
+
+    for (const section of document.getElementsByClassName('hidden')) {
+        section.classList.remove('hidden')
+    }
 }
 
 document.getElementById('btn_add_mi').addEventListener('click', (event) => {

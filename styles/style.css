@@ -167,3 +167,7 @@ hr {
 #delete_dialog {
     background: #ffffe0;
 }
+
+.hidden {
+    display: none;
+}
