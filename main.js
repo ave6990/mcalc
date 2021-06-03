@@ -233,6 +233,7 @@ const showDevices = () => {
 
     recs.innerHTML = ''
     if (data.records.length > 0) {
+        document.getElementById('records_count').innerHTML = data.total_count
         recs.appendChild(
             ui.jsonToTable(data.records, {
                 id: 'devices',
