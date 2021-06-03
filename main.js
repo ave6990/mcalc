@@ -242,6 +242,8 @@ const showDevices = () => {
                     mi_registry_number: 'ГРСИ',
                     mi_number: 'Зав. №',
                     mi_owner: 'Собственник',
+                    primary_verification: 'Первичная',
+                    applicability: 'Пригодность',
                 },
                 event_listener: {
                     click: [
@@ -442,23 +444,6 @@ const showMeasurements = (device) => {
     document.getElementById('measurement_number').innerHTML = device.genMeasurementID()
 }
  
-document.getElementById('test').addEventListener('click', (event) => {
-    const test_data = {
-        mi_type: 'X-am2500',
-        mi_registry_number: '69363-17',
-        mi_number: 'ARKC-2022',
-        mi_manufacture_year: 2018,
-        range: '0-100',
-        channel: 'H2S',
-        m_value: 51,
-        ref_value: 50,
-    }
-    
-    for (const key of Object.keys(test_data)) {
-        document.getElementById(key).value = test_data[key]
-    }
-} )
-
 const mi_info_fields = ['date', 'count_number', 'mi_type', 
     'mi_registry_number', 'mi_manufacture_year', 'mi_number']
 
