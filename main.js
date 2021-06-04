@@ -409,6 +409,7 @@ const showMeasurements = (device) => {
         rel_error: 'δ_cp, %',
         red_error: 'γ_cp, %',
         sko: 'СКО',
+        osko: 'ОСКО, %',
     }
 
     let m_results = document.getElementById('measurements_results')

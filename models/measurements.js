@@ -89,7 +89,7 @@ class Measurements {
                             if (result != item[field] && item[field] != undefined) {
                                 res = false
                             }
-                        } else if (!String(item[field]).match(new RegExp(`.*${filter_obj[field]}.*`))) {
+                        } else if (!String(item[field]).match(new RegExp(`.*${filter_obj[field]}.*`, 'i'))) {
                             res = false
                         }
                     }
@@ -278,6 +278,10 @@ class Device {
                     res.sko = metrology.sko(cur_measurements.map( (item) => {
                         return item.m_value
                     } ))
+
+                    res.osko = metrology.sko(cur_measurements.map( (item) => {
+                        return item.m_value
+                    } ), true)
 
                     const index = this.getStatID(channel, ref_val)
                     
