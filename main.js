@@ -27,11 +27,34 @@ const getVal = (id, convert_func) => {
     }
 }
 
-/** Select a contant of text fields. */
 for (const element of document.getElementsByTagName('input')) {
+    /** Select a contant of text fields. */
     element.addEventListener('click', (event) => {
         event.target.select()
     })
+
+    /** Валидация. Показать / скрыть информационный блок. */
+    const _openDetails = (target, open) => {
+        const id = target.id
+        const info = document.getElementById(`info_${id}`)
+        if (info) {
+            info.open = open
+        }
+    }
+        
+    element.addEventListener('focus', (event) => {
+        _openDetails(event.target, true)
+    } )
+
+    element.addEventListener('blur', (event) => {
+        _openDetails(event.target, false)
+    } )
+}
+
+for (const el of document.getElementsByTagName('details')) {
+    el.addEventListener('click', (event) => {
+        event.preventDefault()
+    } )
 }
 
 /**

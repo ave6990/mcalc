@@ -1,5 +1,4 @@
-<html>
-<head>
+<html> <head>
     <title>Mcalc</title>
     <meta name="viewport" content="width=device-width" charset="utf-8">
     <script src='file:///android_asset/app.js'></script>
@@ -90,7 +89,7 @@
                 <label>Дата поверки</label>
                 <input type=date id=date>
                 <label>Номер счета</label>
-                <input type=text id=count_number>
+                <input type=text id=count_number pattern='\d{1,2}/\d{1,7}'>
                 <label>Вид поверки</label>
                 <select id=verification_type>
                     <option default>периодическая</option>
@@ -109,12 +108,18 @@
                 </header>
                 <label>Тип СИ</label>
                 <input type=text id=mi_type>
-                <label>Регистрационный номер</label>
-                <input type=text id=mi_registry_number> <!-- pattert='\d{4, 5}-\d{2}'> -->
+                <details id=info_mi_registry_number>
+                    <summary>Регистрационный номер</summary>
+                    <p class=info>⚠Введите регисртрационный номер СИ</p>
+                </details>
+                <input type=text id=mi_registry_number pattern='\d{4,5}-\d{2}'>
                 <label>Заводской номер</label>
                 <input type=text id=mi_number>
-                <label>Год выпуска</label>
-                <input type=text id=mi_manufacture_year>
+                <details id=info_mi_manufacture_year>
+                    <summary>Год выпуска</summary>
+                    <p class=info>⚠Введите год выпуска полностью (четыре цифры).</p>
+                </details>
+                <input type=text id=mi_manufacture_year pattern='\d{4}'>
                 <label>Собственник</label>
                 <input type=text id=mi_owner>
             </section>
@@ -122,23 +127,26 @@
                 <header>
                     <p>Измерение <span id=measurement_number>1</span></p>
                 </header>
-                <details>
-                    <summary>Канал измерения *</summary>
-                    <p class=info>Указывается наименование канала измерения. При
-                    необходимости, через запятую указываются единицы измерения.</p>
-                </details>
+                <label>Канал измерения *</label>
                 <input type=text id=channel value=1>
-                <label>Измеренное значение (Xi) *</label>
-                <input type=text id=m_value>
-                <label>Опорное значение (Xref)</label>
-                <input type=text id=ref_value>
-                <details>
+                <details id=info_m_value>
+                    <summary>Измеренное значение (Xi) *</summary>
+                    <p class=info>⚠Введите число (разделитель дробной части ".").</p>
+                </details>
+                <input type=text id=m_value pattern='\d*\.?\d*'>
+                <details id=info_ref_value>
+                    <summary>Опорное значение (Xref)</summary>
+                    <p class=info>⚠Введите число (разделитель дробной части ".").</p>
+                </details>
+                <label></label>
+                <input type=text id=ref_value pattern='\d*\.?\d*'>
+                <details id=info_range>
                     <summary>Диапазон измерения (R)</summary>
-                    <p class=info>Нижняя и верхняя границы диапазона
-                    указываются через дефис, например:
+                    <p class=info>⚠Введите диапазон измерения, разделяя нижнюю и верхнюю границы диапазона
+                    символом дефис, например:
                     '0-100', '20-100' и т. д.</p>
                 </details>
-                <input type=text id=range class=inline>
+                <input type=text id=range class=inline pattern='\d+\.?\d*-\d+\.?\d*'>
                 <div class=flex_style>
                     <button id=btn_add_measure>Добавить</button>
                     <button id=btn_edit_measure>Изменить</button>

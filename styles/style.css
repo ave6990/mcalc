@@ -171,3 +171,11 @@ hr {
 .hidden {
     display: none;
 }
+
+input:invalid {
+    border: red solid 3px;
+}
+
+details > summary {
+    list-style: none;
+}
