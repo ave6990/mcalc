@@ -62,6 +62,14 @@ for (const el of document.getElementsByTagName('details')) {
  * @param {String} page_id - Id html-элемента (section) содержащего видовой экран.
  */
 const toPage = (page_id) => {
+    const cur_page = document.getElementById(page_id)
+
+    /** @fixed_bug При нажатии кнопки удаления экран становился чистым,
+     * потому что класс `hidden` не удалялся с диалога удаления в `onStart()`. */
+    if (cur_page.classList.contains('hidden')) {
+        cur_page.classList.remove('hidden')
+    }
+
     for (const page of pages) {
         if (page == page_id) {
             document.getElementById(page).style.display = ''
@@ -79,9 +87,13 @@ const OnStart = () => {
     measurements = new Measurements()
     showDevices()
 
+    /** @debug Почему не находит `<section id=delete_dialog class=hidden>`? */
+    //const sections = []
     for (const section of document.getElementsByClassName('hidden')) {
         section.classList.remove('hidden')
+        //sections.push(section.id)
     }
+    //app.ShowPopup(sections.join('\n'))
 }
 
 document.getElementById('btn_add_mi').addEventListener('click', (event) => {
