@@ -481,8 +481,6 @@ const showMeasurements = (device) => {
         }
         m_results.appendChild(document.createElement('hr'))
     } 
-
-    document.getElementById('measurement_number').innerHTML = device.genMeasurementID()
 }
  
 const mi_info_fields = ['date', 'count_number', 'mi_type', 
