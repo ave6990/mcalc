@@ -1,3 +1,4 @@
+/** Модель результатов. */
 class Measurements {
     constructor() {
         this._devices = []
@@ -17,7 +18,7 @@ class Measurements {
 
     backupData(path = './db/') {
         const data = JSON.stringify(this._devices)
-        app.WriteFile(`${path}_${new Date()}.json.backup`, data)
+        app.WriteFile(`${path}${new Date()}.json.backup`, data)
     }
 
     genDeviceID() {
@@ -96,7 +97,7 @@ class Measurements {
                 }
                 return res
             } )
-       }
+        }
 
         res.total_count = temp.length
 

@@ -117,6 +117,19 @@ document.getElementById('btn_edit_mi').addEventListener('click', (event) => {
     }
 } )
 
+document.getElementById('btn_del_mi').addEventListener('click', (event) => {
+    if (device.id) {
+        deleteDialog(() => {
+                measurements.removeDevice(device.id)
+                showDevices()
+                measurements.writeData()
+            },
+            'main'
+        )
+    }
+} )    
+
+/** Навигация по страницам таблицы результатов. */
 const showPageNumber = () => {
     document.getElementById('page_number').value = `${state.page} из ${state.pages_count}`
 }
@@ -166,18 +179,6 @@ const deleteDialog = (yesEventListener, view) => {
         toPage(view)
     }
 }
-
-document.getElementById('btn_del_mi').addEventListener('click', (event) => {
-    if (device.id) {
-        deleteDialog(() => {
-                measurements.removeDevice(device.id)
-                showDevices()
-                measurements.writeData()
-            },
-            'main'
-        )
-    }
-} )    
 
 document.getElementById('btn_filter').addEventListener('click', (event) => {
     const filter_section = document.getElementById('filter')
@@ -486,9 +487,9 @@ const showMeasurements = (device) => {
 const mi_info_fields = ['date', 'count_number', 'mi_type', 
     'mi_registry_number', 'mi_manufacture_year', 'mi_number']
 
-/** Event of change the input fields.
- * @debug: Add validation of input data.
- */
+/** Событие изменения поля ввода.
+ * @debug: Добавить валидацию.
+ * */
 for (const id of mi_info_fields) {
     document.getElementById(id).addEventListener('change', (event) => {
 
