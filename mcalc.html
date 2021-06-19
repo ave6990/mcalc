@@ -56,6 +56,12 @@
                     <option>пригодно</option>
                     <option>непригодно</option>
                 </select>
+                <!-- Datalist tag don't work on DroidScript -->
+                <!--<input list=filter_applicabillity_list id=filter_applicability>
+                <datalist id=filter_applicability_list>
+                    <option value='пригодно'>
+                    <option value='непригодно'>
+                </datalist>-->
             </section>
             <header>
                 <p>Результаты поверки</p>
@@ -71,11 +77,14 @@
             </section>
         </section>
         <section id=delete_dialog class=hidden>
+        <!-- Dialog tag don't work on DroidScript -->
+        <!--<dialog id=delete_dialog>-->
             <p>Удалить запись?</p>
             <div class=flex_style>
                 <button id=btn_yes_del>Да</button>
                 <button id=btn_no_del>Нет</button>
             </div>
+        <!--</dialog>-->
         </section>
         <section id=measurements class=hidden>
             <div class=flex_style>

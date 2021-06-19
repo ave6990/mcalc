@@ -87,13 +87,9 @@ const OnStart = () => {
     measurements = new Measurements()
     showDevices()
 
-    /** @debug Почему не находит `<section id=delete_dialog class=hidden>`? */
-    //const sections = []
     for (const section of document.getElementsByClassName('hidden')) {
         section.classList.remove('hidden')
-        //sections.push(section.id)
     }
-    //app.ShowPopup(sections.join('\n'))
 }
 
 document.getElementById('btn_add_mi').addEventListener('click', (event) => {
@@ -170,13 +166,17 @@ document.getElementById('page_number').addEventListener('change', (event) => {
  */
 const deleteDialog = (yesEventListener, view) => {
     toPage('delete_dialog')
+    //const dialog = document.getElementById('delete_dialog')
+    //dialog.show()
     document.getElementById('btn_yes_del').onclick = () => {
-       yesEventListener()
-       toPage(view)
+        yesEventListener()
+        toPage(view)
+        //dialog.close()
     }
     document.getElementById('btn_no_del').onclick = () => {
         document.getElementById('btn_yes_del').onclick = () => {}
         toPage(view)
+        //dialog.close()
     }
 }
 
