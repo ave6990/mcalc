@@ -142,20 +142,20 @@
                     <summary>Измеренное значение (Xi) *</summary>
                     <p class=info>⚠Введите число (разделитель дробной части ".").</p>
                 </details>
-                <input type=text id=m_value pattern='\d*\.?\d*'>
+                <input type=text id=m_value pattern='\d*[\.|,]?\d*'>
                 <details id=info_ref_value>
                     <summary>Опорное значение (Xref)</summary>
                     <p class=info>⚠Введите число (разделитель дробной части ".").</p>
                 </details>
                 <label></label>
-                <input type=text id=ref_value pattern='\d*\.?\d*'>
+                <input type=text id=ref_value pattern='\d*[\.|,]?\d*'>
                 <details id=info_range>
                     <summary>Диапазон измерения (R)</summary>
                     <p class=info>⚠Введите диапазон измерения, разделяя нижнюю и верхнюю границы диапазона
                     символом дефис, например:
                     '0-100', '20-100' и т. д.</p>
                 </details>
-                <input type=text id=range class=inline pattern='\d+\.?\d*-\d+\.?\d*'>
+                <input type=text id=range class=inline pattern='\d+[\.|,]?\d*-\d+[\.|,]?\d*'>
                 <div class=flex_style>
                     <button id=btn_add_measure>Добавить</button>
                     <button id=btn_edit_measure>Изменить</button>

@@ -12,6 +12,7 @@ const state = {
     pages_count: 1,
     total_count: 0,
 }
+
 pages = ['main', 'measurements', 'delete_dialog']
 
 /** Read the value from a text input fields. */
@@ -25,6 +26,10 @@ const getVal = (id, convert_func) => {
     } else {
         return undefined
     }
+}
+
+const toNumber = (val) => {
+    return Number(val.replace(',', '.'))
 }
 
 for (const element of document.getElementsByTagName('input')) {
@@ -41,14 +46,15 @@ for (const element of document.getElementsByTagName('input')) {
             info.open = open
         }
     }
-        
-    element.addEventListener('focus', (event) => {
+    
+    /** @debug показать/скрыть подсказки */
+    /*element.addEventListener('focus', (event) => {
         _openDetails(event.target, true)
     } )
 
     element.addEventListener('blur', (event) => {
         _openDetails(event.target, false)
-    } )
+    } )*/
 }
 
 for (const el of document.getElementsByTagName('details')) {
@@ -301,8 +307,8 @@ const measure = () => {
     if (getVal('m_value')) {
         return {
             channel: getVal('channel'),
-            m_value: getVal('m_value', Number),
-            ref_value: getVal('ref_value', Number),
+            m_value: getVal('m_value', toNumber),
+            ref_value: getVal('ref_value', toNumber),
             range: getVal('range'),
         }
     }

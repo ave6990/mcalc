@@ -5,7 +5,7 @@ class Measurements {
         this.readData()
     }
 
-    readData(path = './data/measurements.json') {
+    readData(path = './data/masurements.json') {
         const data = app.ReadFile('./db/measurements.json')
         this._devices = JSON.parse(data)
         //this.writeData('./data/backup.json')
