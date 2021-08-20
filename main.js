@@ -502,7 +502,30 @@ for (const id of mi_info_fields) {
     } )
 }
 
-document.getElementById('btn_export').addEventListener('click', (event) => {
+/** Временная реализация для сохранения данных по АМ-5*/
+const exportToCSV = () => {
+    const devices = measurements.getDevices(0, -1, state.sort, state.filter)
+    const data = []
+
+    devices.records.forEach( (dev) => {
+        const record = []
+
+        record.push('ам5')
+        record.push(dev.mi_number)
+
+        const vals = dev.measurements.map( (item) => {
+            return item.m_value
+        } )
+
+        record.push(vals.pop())
+        record.push(vals.join(' '))
+        data.push(record.join(';'))
+    } )
+
+    app.WriteFile(`./db/${mDate.toDOMString(new Date())}.csv`, data.join('\n'))
+}
+
+const exportToXLS = () => {
     const devices = measurements.getDevices(0, -1, state.sort, state.filter)
     const table = ui.jsonToTable(devices.records, {
         header: true,
@@ -519,6 +542,9 @@ document.getElementById('btn_export').addEventListener('click', (event) => {
     } ).innerHTML
     const data = xls.toXLS(table)
     app.WriteFile(`./db/${mDate.toDOMString(new Date())}.xls`, data)
+
+    app.ShowPopup('Данные сохранены')
+}
 
     /**app.ShowPopup('Данные сохраняются')
 
@@ -551,7 +577,9 @@ document.getElementById('btn_export').addEventListener('click', (event) => {
         type: 'buffer',
     } )
 
-    app.WriteFile(`./db/${mDate.toDOMString(new Date())}.xlsx`, wbout)*/
+    app.WriteFile(`./db/${mDate.toDOMString(new Date())}.xlsx`, wbout)
     
     app.ShowPopup('Данные сохранены')
-} )
+} )*/
+
+document.getElementById('btn_export').addEventListener('click', exportToCSV)
