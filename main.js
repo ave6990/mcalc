@@ -32,6 +32,15 @@ const toNumber = (val) => {
     return Number(val.replace(',', '.'))
 }
 
+const debug = (obj) => {
+    let container = document.getElementById('debug')
+    container.innerHTML = `${container.innerHTML}\n${obj}`
+}
+
+const clearDebug = () => {
+    document.getElementById('debug').innerHTML = ''
+}
+
 for (const element of document.getElementsByTagName('input')) {
     /** Select a contant of text fields. */
     element.addEventListener('click', (event) => {
@@ -504,7 +513,7 @@ for (const id of mi_info_fields) {
 
 /** Временная реализация для сохранения данных по АМ-5*/
 const exportToCSV = () => {
-    const devices = measurements.getDevices(0, -1, state.sort, state.filter)
+    const devices = measurements.getDevices(0, -1, state.sort, 1, state.filter)
     const data = []
 
     devices.records.forEach( (dev) => {
@@ -523,6 +532,7 @@ const exportToCSV = () => {
     } )
 
     app.WriteFile(`./db/${mDate.toDOMString(new Date())}.csv`, data.join('\n'))
+    app.ShowPopup('Данные сохранены')
 }
 
 const exportToXLS = () => {
